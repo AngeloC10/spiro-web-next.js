@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { usePetStore } from '@/store/petStore'
 import type { Task, Priority } from '@/types'
 import AchievementToast from '@/components/ui/AchievementToast'
+import EmptyState from '@/components/ui/EmptyState'
 
 // Priority visual config
 const PRIORITY_CONFIG: Record<Priority, { label: string; color: string; dot: string; border: string }> = {
@@ -70,21 +71,11 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
 
   if (tasks.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
-        <div
-          className="w-28 h-28 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-xl"
-          style={{ background: 'linear-gradient(135deg, rgba(0,172,193,0.10) 0%, rgba(52,211,153,0.08) 100%)', border: '1px solid rgba(52,211,153,0.15)' }}
-        >
-          🐾
-        </div>
-        <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3">
-          ¡Día libre de tareas!
-        </h3>
-        <p className="text-[var(--text-secondary)] max-w-sm leading-relaxed">
-          Tu mascota está feliz 🎉 No tienes ninguna tarea pendiente para hoy.
-          ¡Aprovecha para descansar o adelantar algo de mañana!
-        </p>
-      </div>
+      <EmptyState
+        illustration="🐾"
+        title="¡Día libre de tareas!"
+        description="Tu mascota está feliz 🎉 No tienes ninguna tarea pendiente para hoy. ¡Aprovecha para descansar o adelantar algo de mañana!"
+      />
     )
   }
 

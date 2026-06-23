@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useSearchStore } from '@/store/searchStore'
 import type { Task, TaskStatus, Priority } from '@/types'
 import Link from 'next/link'
+import EmptyState from '@/components/ui/EmptyState'
 
 // ── Priority / Status metadata ────────────────────────────────────────────────
 const STATUS_OPTIONS: { value: TaskStatus; label: string; emoji: string }[] = [
@@ -71,42 +72,6 @@ function TaskCard({ task }: { task: Task }) {
         </div>
         {task.is_favorite && <span className="text-amber-400 shrink-0 text-base">⭐</span>}
       </div>
-    </div>
-  )
-}
-
-// ── Empty state ───────────────────────────────────────────────────────────────
-function EmptyState({ hasFilters }: { hasFilters: boolean }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
-      <div className="relative mb-6">
-        <div
-          className="w-24 h-24 rounded-3xl flex items-center justify-center text-4xl shadow-lg"
-          style={{ background: 'linear-gradient(135deg, rgba(0,172,193,0.12) 0%, rgba(0,151,167,0.06) 100%)', border: '1px solid rgba(0,172,193,0.15)' }}
-        >
-          {hasFilters ? '🔍' : '📭'}
-        </div>
-        <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-xs">
-          ✨
-        </div>
-      </div>
-      <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">
-        {hasFilters ? 'Sin resultados' : 'Comienza a buscar'}
-      </h3>
-      <p className="text-sm text-[var(--text-secondary)] max-w-xs mb-6 leading-relaxed">
-        {hasFilters
-          ? 'No hay tareas que coincidan con tus filtros. Prueba ajustando los criterios de búsqueda.'
-          : 'Escribe algo en la barra de búsqueda o aplica filtros para encontrar tus tareas.'}
-      </p>
-      {hasFilters && (
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
-          style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%)', boxShadow: '0 4px 20px rgba(0,172,193,0.3)' }}
-        >
-          + Crear primera tarea
-        </Link>
-      )}
     </div>
   )
 }
@@ -359,10 +324,20 @@ export default function SearchPage() {
             ))}
           </div>
         ) : (
-          <EmptyState hasFilters={hasActiveFilter} />
+          <EmptyState 
+            illustration="🔍" 
+            title="Sin resultados" 
+            description="No hay tareas que coincidan con tus filtros. Prueba ajustando los criterios de búsqueda." 
+            ctaText="Volver al Tablero"
+            ctaHref="/dashboard"
+          />
         )
       ) : (
-        <EmptyState hasFilters={false} />
+        <EmptyState 
+          illustration="📭" 
+          title="Comienza a buscar" 
+          description="Escribe algo en la barra de búsqueda o aplica filtros para encontrar tus tareas." 
+        />
       )}
     </div>
   )

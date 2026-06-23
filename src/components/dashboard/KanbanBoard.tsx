@@ -8,6 +8,7 @@ import CreateTaskModal from '@/components/tasks/CreateTaskModal'
 import TaskDetailModal from '@/components/tasks/TaskDetailModal'
 import { usePetStore } from '@/store/petStore'
 import AchievementToast from '@/components/ui/AchievementToast'
+import EmptyState from '@/components/ui/EmptyState'
 
 const COLUMNS: { id: TaskStatus; title: string; wipLimit?: number }[] = [
   { id: 'todo', title: 'Por hacer' },
@@ -177,7 +178,18 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
         />
       )}
 
-      <DragDropContext onDragEnd={handleDragEnd}>
+      {tasks.length === 0 ? (
+        <div className="h-[calc(100vh-12rem)] border border-dashed border-[var(--border)] rounded-3xl bg-[rgba(255,255,255,0.02)]">
+          <EmptyState
+            illustration="📋"
+            title="Tablero Limpio"
+            description="No tienes tareas en tu tablero actualmente. ¡Es un buen momento para planificar tu próxima meta!"
+            ctaText="Crear Nueva Tarea"
+            onCtaClick={() => setCreatingStatus('todo')}
+          />
+        </div>
+      ) : (
+        <DragDropContext onDragEnd={handleDragEnd}>
         <div className="flex gap-6 min-h-[500px] h-[calc(100vh-12rem)] overflow-x-auto pb-6 pr-2">
           {COLUMNS.map((col) => {
             const colTasks = tasks
@@ -291,6 +303,7 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
           })}
         </div>
       </DragDropContext>
+      )}
 
       {/* Modals */}
       {creatingStatus && (

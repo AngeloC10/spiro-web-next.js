@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { name: 'Recompensas', href: '/rewards',      icon: '📦' },
   { name: 'Tienda',      href: '/store',        icon: '🛒' },
   { name: 'Perfil',      href: '/profile',      icon: '👤' },
+  { name: 'Ajustes',     href: '/settings',     icon: '⚙️' },
 ]
 
 export default function Sidebar() {
