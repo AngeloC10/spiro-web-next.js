@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Task, TaskStatus, TaskItem } from '@/types'
 import CreateTaskModal from '@/components/tasks/CreateTaskModal'
 import TaskDetailModal from '@/components/tasks/TaskDetailModal'
+import { usePetStore } from '@/store/petStore'
 
 const COLUMNS: { id: TaskStatus; title: string; wipLimit?: number }[] = [
   { id: 'todo', title: 'Por hacer' },
@@ -30,6 +31,7 @@ interface KanbanBoardProps {
 export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const supabase = createClient()
+  const { addXpToday } = usePetStore()
 
   // ── Modals State ──────────────────────────────────────────────────────────
   const [creatingStatus, setCreatingStatus] = useState<TaskStatus | null>(null)
@@ -110,6 +112,9 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
         xpReward = Math.floor(xpReward * 1.3)
       }
     }
+
+    // Track XP earned today for the feed mechanic
+    addXpToday(xpReward)
 
     const { data: petData } = await supabase.from('pets').select('xp').eq('id', petId).single()
     if (petData) {

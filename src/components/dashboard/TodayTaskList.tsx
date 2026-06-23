@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { usePetStore } from '@/store/petStore'
 import type { Task, Priority } from '@/types'
 
 // Priority visual config
@@ -20,9 +21,11 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const [completing, setCompleting] = useState<string | null>(null)
   const supabase = createClient()
+  const { addXpToday } = usePetStore()
 
   const handleComplete = async (taskId: string) => {
     setCompleting(taskId)
+    const task = tasks.find(t => t.id === taskId)
     const { error } = await supabase
       .from('tasks')
       .update({ status: 'done', updated_at: new Date().toISOString() })
@@ -30,6 +33,14 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
 
     if (!error) {
       setTasks(prev => prev.filter(t => t.id !== taskId))
+      // Award XP to pet based on priority
+      if (task) {
+        let xp = 15
+        if (task.priority === 'urgent' || task.priority === 'high') xp = 50
+        else if (task.priority === 'medium') xp = 30
+        addXpToday(xp)
+        // Also update pet XP in DB if we have the pet id from store
+      }
     }
     setCompleting(null)
   }
