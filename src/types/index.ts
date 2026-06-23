@@ -27,6 +27,14 @@ export interface Column {
 
 export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done'
 
+export interface TaskItem {
+  id: string
+  task_id: string
+  text: string
+  completed: boolean
+  created_at: string
+}
+
 // ── Task (maps to `tasks` table) ─────────────────────────────────────────────
 export interface Task {
   id: string
@@ -42,6 +50,7 @@ export interface Task {
   position: number
   created_at: string
   updated_at: string
+  task_items?: TaskItem[]
 }
 
 // ── Pet Stats (legacy – maps to `pet_stats` table) ───────────────────────────

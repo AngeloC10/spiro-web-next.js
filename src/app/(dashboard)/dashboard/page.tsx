@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import KanbanBoard from '@/components/dashboard/KanbanBoard'
 import PetPanel from '@/components/dashboard/PetPanel'
+import NewTaskButton from '@/components/dashboard/NewTaskButton'
 import type { Task, Pet } from '@/types'
 
 export default async function DashboardPage() {
@@ -37,21 +38,19 @@ export default async function DashboardPage() {
   // Fetch tasks
   const { data: tasks } = await supabase
     .from('tasks')
-    .select('*')
+    .select('*, task_items(*)')
     .eq('user_id', user.id)
     .order('position', { ascending: true })
 
   return (
-    <div className="h-full flex flex-col md:flex-row gap-6">
-      {/* Main Kanban Area */}
-      <div className="flex-1 min-w-0">
-        <div className="mb-6 flex items-center justify-between">
+    <div className="flex flex-col md:flex-row gap-6" style={{ minHeight: 'calc(100vh - 7rem)' }}>
+      {/* Main Kanban Area — takes all available width minus the side panel */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        <div className="mb-6 flex items-center justify-between shrink-0">
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">
             Mis Tareas
           </h1>
-          <button className="btn-primary py-2 px-4 text-sm">
-            + Nueva Tarea
-          </button>
+          <NewTaskButton />
         </div>
         
         <KanbanBoard 
@@ -60,6 +59,7 @@ export default async function DashboardPage() {
           petId={pet?.id}
         />
       </div>
+
 
       {/* Side Panel */}
       <div className="w-full md:w-80 shrink-0 space-y-6">

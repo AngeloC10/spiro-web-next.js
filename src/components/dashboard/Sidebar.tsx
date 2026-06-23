@@ -2,15 +2,43 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
-const navItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: '📊' },
-  { name: 'Tienda', href: '/store', icon: '🛒' },
-  { name: 'Perfil', href: '/profile', icon: '👤' },
+const NAV_ITEMS = [
+  { name: 'Dashboard',  href: '/dashboard', icon: '📊' },
+  { name: 'Búsqueda',   href: '/search',    icon: '🔍' },
+  { name: 'Hoy',        href: '/today',     icon: '📅', badge: true },
+  { name: 'Tienda',     href: '/store',     icon: '🛒' },
+  { name: 'Perfil',     href: '/profile',   icon: '👤' },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const [todayCount, setTodayCount] = useState<number | null>(null)
+  const supabase = createClient()
+
+  // ── Fetch today's task count for the badge ──────────────────────────────────
+  useEffect(() => {
+    const fetchTodayCount = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const todayStr = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+
+      const { count } = await supabase
+        .from('tasks')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .gte('due_date', todayStr)
+        .lte('due_date', todayStr)
+        .neq('status', 'done')
+
+      setTodayCount(count ?? 0)
+    }
+
+    fetchTodayCount()
+  }, [pathname]) // refresh on navigation
 
   return (
     <aside className="w-64 hidden md:flex flex-col border-r border-[var(--border)] bg-[var(--bg-surface)]">
@@ -35,9 +63,11 @@ export default function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-4 py-4 space-y-2">
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href)
+      <nav className="flex-1 px-4 py-4 space-y-2" aria-label="Navegación principal">
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+          const showBadge = item.badge && todayCount !== null && todayCount > 0
+
           return (
             <Link
               key={item.name}
@@ -48,10 +78,22 @@ export default function Sidebar() {
                   : 'text-[var(--text-secondary)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <span className="text-xl" aria-hidden="true">
-                {item.icon}
-              </span>
-              {item.name}
+              <span className="text-xl" aria-hidden="true">{item.icon}</span>
+              <span className="flex-1">{item.name}</span>
+
+              {/* Today badge */}
+              {showBadge && (
+                <span
+                  className={`min-w-[1.35rem] h-[1.35rem] rounded-full text-[11px] font-bold flex items-center justify-center px-1 transition-colors ${
+                    isActive
+                      ? 'bg-white text-[var(--accent)]'
+                      : 'bg-[var(--accent)] text-white shadow-sm shadow-[rgba(0,172,193,0.4)]'
+                  }`}
+                  aria-label={`${todayCount} tareas para hoy`}
+                >
+                  {todayCount! > 99 ? '99+' : todayCount}
+                </span>
+              )}
             </Link>
           )
         })}
