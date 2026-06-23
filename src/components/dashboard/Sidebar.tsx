@@ -7,11 +7,13 @@ import { createClient } from '@/lib/supabase/client'
 
 const NAV_ITEMS = [
   { name: 'Dashboard',   href: '/dashboard',    icon: '📊' },
-  { name: 'Mi Mascota',  href: '/pet',          icon: '🐾' },
+  { name: 'Calendario',  href: '/calendar',     icon: '📆' },
   { name: 'Hoy',         href: '/today',        icon: '📅', badge: true },
   { name: 'Búsqueda',    href: '/search',       icon: '🔍' },
+  { name: 'Mi Mascota',  href: '/pet',          icon: '🐾' },
   { name: 'Logros',      href: '/achievements', icon: '🏆' },
   { name: 'Estadísticas',href: '/stats',        icon: '📈' },
+  { name: 'Productividad',href: '/stats/productivity', icon: '⚡' },
   { name: 'Recompensas', href: '/rewards',      icon: '📦' },
   { name: 'Tienda',      href: '/store',        icon: '🛒' },
   { name: 'Perfil',      href: '/profile',      icon: '👤' },
