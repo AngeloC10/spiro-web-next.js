@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { name: 'Productividad',href: '/stats/productivity', icon: '⚡' },
   { name: 'Recompensas', href: '/rewards',      icon: '📦' },
   { name: 'Tienda',      href: '/store',        icon: '🛒' },
+  { name: 'Colección',   href: '/collection',   icon: '🎒' },
   { name: 'Perfil',      href: '/profile',      icon: '👤' },
   { name: 'Ajustes',     href: '/settings',     icon: '⚙️' },
 ]

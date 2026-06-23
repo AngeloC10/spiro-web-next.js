@@ -133,3 +133,41 @@ export interface DailyReward {
   created_at: string
 }
 
+// ── Store & Monetization ─────────────────────────────────────────────────────
+export type ItemRarity = 'common' | 'rare' | 'epic' | 'legendary'
+export type StoreItemType = 'pet' | 'accessory' | 'theme'
+
+export interface StoreItem {
+  id: string
+  name: string
+  type: StoreItemType
+  description: string | null
+  price_usd: number
+  rarity: ItemRarity
+  preview_url: string
+  is_active: boolean
+  created_at: string
+}
+
+export interface Purchase {
+  id: string
+  user_id: string
+  item_id: string
+  amount_paid: number
+  status: string
+  stripe_session_id: string | null
+  created_at: string
+}
+
+export interface UserPetCollection {
+  id: string
+  user_id: string
+  item_id: string
+  pet_type: string
+  source: string
+  acquired_at: string
+  
+  // Joined relation:
+  store_item?: StoreItem
+}
+
