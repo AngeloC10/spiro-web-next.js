@@ -7,6 +7,7 @@ import type { Task, TaskStatus, TaskItem } from '@/types'
 import CreateTaskModal from '@/components/tasks/CreateTaskModal'
 import TaskDetailModal from '@/components/tasks/TaskDetailModal'
 import { usePetStore } from '@/store/petStore'
+import AchievementToast from '@/components/ui/AchievementToast'
 
 const COLUMNS: { id: TaskStatus; title: string; wipLimit?: number }[] = [
   { id: 'todo', title: 'Por hacer' },
@@ -33,7 +34,11 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
   const supabase = createClient()
   const { addXpToday } = usePetStore()
 
-  // ── Modals State ──────────────────────────────────────────────────────────
+  // ── Achievement Toast State ────────────────────────────────────────────────
+  interface ToastAch { name: string; icon: string; xp: number }
+  const [achievementToast, setAchievementToast] = useState<ToastAch | null>(null)
+
+  // ── Modals State ────────────────────────────────────────────────────────────
   const [creatingStatus, setCreatingStatus] = useState<TaskStatus | null>(null)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
@@ -99,7 +104,7 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
     }
   }
 
-  // ── XP Logic ──────────────────────────────────────────────────────────────
+  // ── XP Logic + Streak + Achievements ───────────────────────────────────────
   const awardXP = async (task: Task) => {
     if (!petId) return
     let xpReward = 15
@@ -108,17 +113,32 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
 
     if (task.due_date) {
       const dueDate = new Date(task.due_date)
-      if (dueDate >= new Date()) {
-        xpReward = Math.floor(xpReward * 1.3)
-      }
+      if (dueDate >= new Date()) xpReward = Math.floor(xpReward * 1.3)
     }
 
-    // Track XP earned today for the feed mechanic
     addXpToday(xpReward)
 
+    // Update pet XP in DB
     const { data: petData } = await supabase.from('pets').select('xp').eq('id', petId).single()
     if (petData) {
       await supabase.from('pets').update({ xp: petData.xp + xpReward }).eq('id', petId)
+    }
+
+    // Update streak
+    await supabase.rpc('update_streak', { p_user_id: userId })
+
+    // Check achievements & show toast for newly unlocked ones
+    const { data: newAchs } = await supabase.rpc('check_achievements', { p_user_id: userId })
+    if (newAchs && newAchs.length > 0) {
+      // Fetch first newly unlocked achievement details
+      const { data: achData } = await supabase
+        .from('achievements')
+        .select('name, icon, xp_reward')
+        .eq('key', newAchs[0])
+        .single()
+      if (achData) {
+        setAchievementToast({ name: achData.name, icon: achData.icon, xp: achData.xp_reward })
+      }
     }
   }
 
@@ -147,6 +167,16 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
 
   return (
     <>
+      {/* Achievement Toast */}
+      {achievementToast && (
+        <AchievementToast
+          achievementName={achievementToast.name}
+          achievementIcon={achievementToast.icon}
+          xpReward={achievementToast.xp}
+          onDismiss={() => setAchievementToast(null)}
+        />
+      )}
+
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="flex gap-6 min-h-[500px] h-[calc(100vh-12rem)] overflow-x-auto pb-6 pr-2">
           {COLUMNS.map((col) => {

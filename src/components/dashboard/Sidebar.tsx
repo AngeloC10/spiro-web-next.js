@@ -6,12 +6,15 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV_ITEMS = [
-  { name: 'Dashboard',  href: '/dashboard', icon: '📊' },
-  { name: 'Mi Mascota', href: '/pet',       icon: '🐾' },
-  { name: 'Búsqueda',   href: '/search',    icon: '🔍' },
-  { name: 'Hoy',        href: '/today',     icon: '📅', badge: true },
-  { name: 'Tienda',     href: '/store',     icon: '🛒' },
-  { name: 'Perfil',     href: '/profile',   icon: '👤' },
+  { name: 'Dashboard',   href: '/dashboard',    icon: '📊' },
+  { name: 'Mi Mascota',  href: '/pet',          icon: '🐾' },
+  { name: 'Hoy',         href: '/today',        icon: '📅', badge: true },
+  { name: 'Búsqueda',    href: '/search',       icon: '🔍' },
+  { name: 'Logros',      href: '/achievements', icon: '🏆' },
+  { name: 'Estadísticas',href: '/stats',        icon: '📈' },
+  { name: 'Recompensas', href: '/rewards',      icon: '📦' },
+  { name: 'Tienda',      href: '/store',        icon: '🛒' },
+  { name: 'Perfil',      href: '/profile',      icon: '👤' },
 ]
 
 export default function Sidebar() {

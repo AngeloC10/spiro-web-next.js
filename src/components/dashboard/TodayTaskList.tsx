@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { usePetStore } from '@/store/petStore'
 import type { Task, Priority } from '@/types'
+import AchievementToast from '@/components/ui/AchievementToast'
 
 // Priority visual config
 const PRIORITY_CONFIG: Record<Priority, { label: string; color: string; dot: string; border: string }> = {
@@ -20,6 +21,10 @@ interface TodayTaskListProps {
 export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const [completing, setCompleting] = useState<string | null>(null)
+  
+  interface ToastAch { name: string; icon: string; xp: number }
+  const [achievementToast, setAchievementToast] = useState<ToastAch | null>(null)
+  
   const supabase = createClient()
   const { addXpToday } = usePetStore()
 
@@ -39,7 +44,25 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
         if (task.priority === 'urgent' || task.priority === 'high') xp = 50
         else if (task.priority === 'medium') xp = 30
         addXpToday(xp)
-        // Also update pet XP in DB if we have the pet id from store
+        // Note: pet XP in DB is typically updated here if we have petId
+      }
+
+      // Update streak and check achievements
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await supabase.rpc('update_streak', { p_user_id: user.id })
+        
+        const { data: newAchs } = await supabase.rpc('check_achievements', { p_user_id: user.id })
+        if (newAchs && newAchs.length > 0) {
+          const { data: achData } = await supabase
+            .from('achievements')
+            .select('name, icon, xp_reward')
+            .eq('key', newAchs[0])
+            .single()
+          if (achData) {
+            setAchievementToast({ name: achData.name, icon: achData.icon, xp: achData.xp_reward })
+          }
+        }
       }
     }
     setCompleting(null)
@@ -66,9 +89,20 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
   }
 
   return (
-    <div className="space-y-3">
-      {tasks.map((task) => {
-        const cfg = PRIORITY_CONFIG[task.priority] ?? PRIORITY_CONFIG.medium
+    <>
+      {/* Achievement Toast */}
+      {achievementToast && (
+        <AchievementToast
+          achievementName={achievementToast.name}
+          achievementIcon={achievementToast.icon}
+          xpReward={achievementToast.xp}
+          onDismiss={() => setAchievementToast(null)}
+        />
+      )}
+
+      <div className="space-y-3">
+        {tasks.map((task) => {
+          const cfg = PRIORITY_CONFIG[task.priority] ?? PRIORITY_CONFIG.medium
         const isDone    = task.status === 'done'
         const isLoading = completing === task.id
 
@@ -140,5 +174,6 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
         )
       })}
     </div>
+    </>
   )
 }

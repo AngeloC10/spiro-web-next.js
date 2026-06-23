@@ -91,3 +91,45 @@ export interface ActivityHistory {
 
 // ── Supabase helper – generic DB response wrapper ────────────────────────────
 export type DbResult<T> = { data: T; error: null } | { data: null; error: Error }
+
+// ── Streak (maps to `streaks` table) ─────────────────────────────────────────
+export interface Streak {
+  id: string
+  user_id: string
+  current_streak: number
+  max_streak: number
+  last_activity_date: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ── Achievement (maps to `achievements` catalogue) ───────────────────────────
+export interface Achievement {
+  id: string
+  key: string
+  name: string
+  description: string
+  icon: string
+  xp_reward: number
+  created_at: string
+}
+
+// ── UserAchievement (maps to `user_achievements`) ────────────────────────────
+export interface UserAchievement {
+  id: string
+  user_id: string
+  achievement_id: string
+  unlocked_at: string
+  achievement?: Achievement
+}
+
+// ── DailyReward (maps to `daily_rewards`) ────────────────────────────────────
+export interface DailyReward {
+  id: string
+  user_id: string
+  last_claimed_at: string | null
+  next_available_at: string
+  total_claimed: number
+  created_at: string
+}
+
