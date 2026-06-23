@@ -45,6 +45,13 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
 
   // ── Hydration ─────────────────────────────────────────────────────────────
   const [isMounted, setIsMounted] = useState(false)
+  const [, setTick] = useState(0)
+
+  // ── Force tick every 60s for relative dates ─────────────────────────────────
+  useEffect(() => {
+    const interval = setInterval(() => setTick(t => t + 1), 60000)
+    return () => clearInterval(interval)
+  }, [])
   useEffect(() => {
     setIsMounted(true)
     // Allow the Server Component header button to open this modal
@@ -159,12 +166,35 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
     setTasks(prev => prev.filter(t => t.id !== taskId))
   }
 
+  const handleToggleFavorite = async (e: React.MouseEvent, taskId: string, isFav: boolean) => {
+    e.stopPropagation()
+    // Optimistic
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, is_favorite: !isFav } : t))
+    // DB Update
+    await supabase.from('tasks').update({ is_favorite: !isFav }).eq('id', taskId)
+  }
+
   const handleTaskCompletedFromModal = () => {
     if (!selectedTask) return
     awardXP(selectedTask)
   }
 
-  if (!isMounted) return <div className="h-full flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin"></div></div>
+  if (!isMounted) {
+    return (
+      <div className="flex gap-6 min-h-[500px] h-[calc(100vh-12rem)] overflow-x-auto pb-6 pr-2">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="flex flex-col w-80 shrink-0">
+            <div className="h-6 w-32 bg-[rgba(255,255,255,0.1)] rounded mb-3 animate-pulse"></div>
+            <div className="flex-1 bg-[rgba(255,255,255,0.02)] rounded-2xl p-3 border border-transparent">
+              {[1, 2].map(j => (
+                <div key={j} className="h-28 bg-[rgba(255,255,255,0.05)] rounded-xl mb-3 animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <>
@@ -261,7 +291,13 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
                               >
                                 <div className="flex justify-between items-start mb-2">
                                   <h4 className="text-sm font-medium text-[var(--text-primary)] leading-tight">{task.title}</h4>
-                                  {task.is_favorite && <span className="text-amber-400 text-xs ml-2 shrink-0">⭐</span>}
+                                  <button 
+                                    onClick={(e) => handleToggleFavorite(e, task.id, task.is_favorite)}
+                                    className={`text-xs ml-2 shrink-0 transition-transform hover:scale-125 ${task.is_favorite ? 'text-amber-400' : 'text-[var(--text-muted)] opacity-30 hover:opacity-100 hover:text-amber-400'}`}
+                                    title={task.is_favorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+                                  >
+                                    {task.is_favorite ? '★' : '☆'}
+                                  </button>
                                 </div>
                                 
                                 {task.category && (

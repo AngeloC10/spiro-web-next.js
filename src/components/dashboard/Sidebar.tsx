@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { name: 'Calendario',  href: '/calendar',     icon: '📆' },
   { name: 'Hoy',         href: '/today',        icon: '📅', badge: true },
   { name: 'Búsqueda',    href: '/search',       icon: '🔍' },
+  { name: 'Favoritos',   href: '/favorites',    icon: '⭐' },
   { name: 'Mi Mascota',  href: '/pet',          icon: '🐾' },
   { name: 'Logros',      href: '/achievements', icon: '🏆' },
   { name: 'Estadísticas',href: '/stats',        icon: '📈' },
