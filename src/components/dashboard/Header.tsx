@@ -81,6 +81,18 @@ export default function Header() {
           <div className="h-9 w-9 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-bold text-sm shadow-md">
             {userName.charAt(0).toUpperCase()}
           </div>
+          
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut()
+              window.location.href = '/login'
+            }}
+            className="md:hidden flex items-center justify-center h-9 w-9 rounded-full bg-red-400/10 text-red-400 hover:bg-red-400/20 transition-colors ml-2"
+            title="Cerrar sesión"
+            aria-label="Cerrar sesión"
+          >
+            🚪
+          </button>
         </div>
       </div>
     </header>

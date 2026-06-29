@@ -109,7 +109,16 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom context */}
-      <div className="p-6 border-t border-[var(--border)]">
+      <div className="p-6 border-t border-[var(--border)] flex flex-col gap-4">
+        <button
+          onClick={async () => {
+            await supabase.auth.signOut()
+            window.location.href = '/login'
+          }}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors"
+        >
+          <span className="text-lg">🚪</span> Cerrar sesión
+        </button>
         <p className="text-xs text-[var(--text-muted)] text-center">
           SPIRO MVP v0.1
         </p>
