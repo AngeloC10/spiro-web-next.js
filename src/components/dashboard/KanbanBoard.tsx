@@ -28,9 +28,10 @@ interface KanbanBoardProps {
   initialTasks: Task[]
   userId: string
   petId: string | undefined
+  boardId: string
 }
 
-export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoardProps) {
+export default function KanbanBoard({ initialTasks, userId, petId, boardId }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const supabase = createClient()
   const { addXpToday } = usePetStore()
@@ -345,6 +346,7 @@ export default function KanbanBoard({ initialTasks, userId, petId }: KanbanBoard
       {creatingStatus && (
         <CreateTaskModal
           status={creatingStatus}
+          boardId={boardId}
           onClose={() => setCreatingStatus(null)}
           onSuccess={handleTaskCreated}
         />

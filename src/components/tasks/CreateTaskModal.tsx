@@ -20,11 +20,12 @@ type TaskFormValues = z.infer<typeof taskSchema>
 
 interface CreateTaskModalProps {
   status: TaskStatus
+  boardId: string
   onClose: () => void
   onSuccess: (task: Task) => void
 }
 
-export default function CreateTaskModal({ status, onClose, onSuccess }: CreateTaskModalProps) {
+export default function CreateTaskModal({ status, boardId, onClose, onSuccess }: CreateTaskModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const supabase = createClient()
@@ -59,6 +60,7 @@ export default function CreateTaskModal({ status, onClose, onSuccess }: CreateTa
       .from('tasks')
       .select('position')
       .eq('user_id', userData.user.id)
+      .eq('board_id', boardId)
       .eq('status', status)
       .order('position', { ascending: false })
       .limit(1)
@@ -72,6 +74,7 @@ export default function CreateTaskModal({ status, onClose, onSuccess }: CreateTa
       .from('tasks')
       .insert({
         user_id: userData.user.id,
+        board_id: boardId,
         title: data.title,
         description: data.description || null,
         category: data.category || null,

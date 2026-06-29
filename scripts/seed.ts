@@ -78,19 +78,49 @@ async function seed() {
     console.log("✅ Mascota configurada.")
   }
 
-  // 3. Crear tareas de ejemplo
+  // 3. Crear tablero de ejemplo (o usar el existente)
+  console.log("Verificando tablero por defecto...")
+  let boardId: string
+
+  const { data: existingBoard } = await supabase
+    .from('boards')
+    .select('id')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .single()
+
+  if (existingBoard) {
+    boardId = existingBoard.id
+    console.log("✅ Tablero existente encontrado.")
+  } else {
+    const { data: newBoard, error: boardError } = await supabase
+      .from('boards')
+      .insert({ user_id: userId, title: 'General', description: 'Tablero principal' })
+      .select('id')
+      .single()
+
+    if (boardError || !newBoard) {
+      console.error("❌ Error creando tablero:", boardError?.message)
+      return
+    }
+    boardId = newBoard.id
+    console.log("✅ Tablero por defecto creado.")
+  }
+
+  // 4. Crear tareas de ejemplo
   console.log("Insertando tareas de ejemplo...")
   const tasks = [
-    { user_id: userId, title: 'Diseñar interfaz MVP', description: 'Crear wireframes en Figma', status: 'done', priority: 'high', category: 'Diseño', is_favorite: true },
-    { user_id: userId, title: 'Implementar Auth', description: 'Conectar con Supabase SSR', status: 'done', priority: 'urgent', category: 'Desarrollo', is_favorite: false },
-    { user_id: userId, title: 'Configurar pasarela de pagos', description: 'Stripe webhook setup', status: 'in_progress', priority: 'high', category: 'Backend', is_favorite: false },
-    { user_id: userId, title: 'Grabar video de demo', status: 'todo', priority: 'medium', category: 'Marketing', is_favorite: false },
-    { user_id: userId, title: 'Revisar PRs del equipo', status: 'review', priority: 'low', category: 'Desarrollo', is_favorite: false },
+    { user_id: userId, board_id: boardId, title: 'Diseñar interfaz MVP', description: 'Crear wireframes en Figma', status: 'done', priority: 'high', category: 'Diseño', is_favorite: true },
+    { user_id: userId, board_id: boardId, title: 'Implementar Auth', description: 'Conectar con Supabase SSR', status: 'done', priority: 'urgent', category: 'Desarrollo', is_favorite: false },
+    { user_id: userId, board_id: boardId, title: 'Configurar pasarela de pagos', description: 'Stripe webhook setup', status: 'in_progress', priority: 'high', category: 'Backend', is_favorite: false },
+    { user_id: userId, board_id: boardId, title: 'Grabar video de demo', description: '', status: 'todo', priority: 'medium', category: 'Marketing', is_favorite: false },
+    { user_id: userId, board_id: boardId, title: 'Revisar PRs del equipo', description: '', status: 'review', priority: 'low', category: 'Desarrollo', is_favorite: false },
   ]
 
   for (const task of tasks) {
-    // Basic idempotency by title
-    const { data: existingTask } = await supabase.from('tasks').select('id').eq('user_id', userId).eq('title', task.title).single()
+    // Basic idempotency by title and board
+    const { data: existingTask } = await supabase.from('tasks').select('id').eq('user_id', userId).eq('board_id', boardId).eq('title', task.title).single()
     if (!existingTask) {
       await supabase.from('tasks').insert(task)
     }

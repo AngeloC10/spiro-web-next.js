@@ -1,6 +1,6 @@
 'use client'
 
-export default function NewTaskButton() {
+export default function NewTaskButton({ boardId }: { boardId?: string }) {
   const handleClick = () => {
     // Call the KanbanBoard's modal opener registered in the hydration effect
     if (typeof window !== 'undefined' && (window as any).__spiroOpenCreateTask) {

@@ -1,49 +1,69 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import type { Board } from '@/types'
 
 type NavItem = {
   name: string
   href?: string
-  icon: string
+  icon?: string
   badge?: boolean
-  subItems?: { name: string, href: string, badge?: boolean }[]
+  subItems?: { name: string, href?: string, badge?: boolean, action?: string }[]
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { name: 'Dashboard',   href: '/dashboard',    icon: '📊' },
-  { name: 'Agenda',      icon: '📆', subItems: [
+const STATIC_NAV_ITEMS: Omit<NavItem, 'icon'>[] = [
+  { name: 'Agenda',      subItems: [
       { name: 'Hoy',         href: '/today', badge: true },
       { name: 'Calendario',  href: '/calendar' },
   ]},
-  { name: 'Descubrir',   icon: '🔍', subItems: [
+  { name: 'Descubrir',   subItems: [
       { name: 'Búsqueda',    href: '/search' },
       { name: 'Favoritos',   href: '/favorites' },
   ]},
-  { name: 'Gamificación',icon: '🏆', subItems: [
+  { name: 'Gamificación',subItems: [
       { name: 'Mi Mascota',  href: '/pet' },
       { name: 'Logros',      href: '/achievements' },
       { name: 'Recompensas', href: '/rewards' },
       { name: 'Tienda',      href: '/store' },
       { name: 'Colección',   href: '/collection' },
   ]},
-  { name: 'Rendimiento', icon: '📈', subItems: [
+  { name: 'Rendimiento', subItems: [
       { name: 'Estadísticas',href: '/stats' },
       { name: 'Productividad',href: '/stats/productivity' },
   ]},
-  { name: 'Ajustes',     icon: '⚙️', subItems: [
+  { name: 'Ajustes',     subItems: [
       { name: 'Perfil',      href: '/profile' },
       { name: 'Configuración',href: '/settings' },
   ]},
 ]
 
-function NavGroup({ item, pathname, todayCount }: { item: NavItem, pathname: string, todayCount: number | null }) {
+function NavGroup({ 
+  item, 
+  pathname, 
+  todayCount, 
+  onAction, 
+  isCreatingBoard, 
+  newBoardTitle, 
+  setNewBoardTitle, 
+  handleCreateBoard, 
+  setIsCreatingBoard 
+}: { 
+  item: NavItem, 
+  pathname: string, 
+  todayCount: number | null, 
+  onAction: (action: string) => void,
+  isCreatingBoard?: boolean,
+  newBoardTitle?: string,
+  setNewBoardTitle?: (val: string) => void,
+  handleCreateBoard?: (e: React.FormEvent) => void,
+  setIsCreatingBoard?: (val: boolean) => void
+}) {
   const isActive = item.href 
     ? (pathname === item.href || pathname.startsWith(item.href + '/')) 
-    : item.subItems?.some(sub => pathname === sub.href || pathname.startsWith(sub.href + '/'))
+    : item.subItems?.some(sub => sub.href && (pathname === sub.href || pathname.startsWith(sub.href + '/')))
   
   const [isOpen, setIsOpen] = useState(isActive)
   
@@ -104,13 +124,43 @@ function NavGroup({ item, pathname, todayCount }: { item: NavItem, pathname: str
       {isOpen && (
         <div className="pl-11 pr-2 space-y-1">
           {item.subItems.map(sub => {
-            const isSubActive = pathname === sub.href || pathname.startsWith(sub.href + '/')
+            const isSubActive = sub.href && (pathname === sub.href || pathname.startsWith(sub.href + '/'))
             const showSubBadge = sub.badge && todayCount !== null && todayCount > 0
             
+            if (sub.action) {
+              if (sub.action === 'CREATE_BOARD' && isCreatingBoard) {
+                return (
+                  <form key="create-board-form" onSubmit={handleCreateBoard} className="px-3 py-2">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Nombre..."
+                      value={newBoardTitle}
+                      onChange={e => setNewBoardTitle && setNewBoardTitle(e.target.value)}
+                      className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded px-2 py-1 text-sm text-[var(--text-primary)] mb-2 outline-none focus:border-[var(--accent)]"
+                    />
+                    <div className="flex gap-1">
+                      <button type="submit" disabled={!newBoardTitle?.trim()} className="flex-1 bg-[var(--accent)] text-white text-[10px] font-bold py-1 rounded disabled:opacity-50">Crear</button>
+                      <button type="button" onClick={() => { setIsCreatingBoard && setIsCreatingBoard(false); setNewBoardTitle && setNewBoardTitle('') }} className="flex-1 bg-transparent border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-bold py-1 rounded hover:text-white">Cancelar</button>
+                    </div>
+                  </form>
+                )
+              }
+              return (
+                <button
+                  key={sub.name}
+                  onClick={() => onAction(sub.action!)}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm text-[var(--accent)] hover:bg-[var(--accent)] hover:bg-opacity-10"
+                >
+                  <span className="flex-1 text-left font-medium">{sub.name}</span>
+                </button>
+              )
+            }
+
             return (
               <Link
                 key={sub.name}
-                href={sub.href}
+                href={sub.href!}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                   isSubActive
                     ? 'bg-[var(--accent)] text-white font-medium shadow-sm'
@@ -140,14 +190,28 @@ function NavGroup({ item, pathname, todayCount }: { item: NavItem, pathname: str
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [todayCount, setTodayCount] = useState<number | null>(null)
+  const [boards, setBoards] = useState<Board[]>([])
+  const [userId, setUserId] = useState<string | null>(null)
+  const [isCreatingBoard, setIsCreatingBoard] = useState(false)
+  const [newBoardTitle, setNewBoardTitle] = useState('')
   const supabase = createClient()
 
   // ── Fetch today's task count for the badge ──────────────────────────────────
   useEffect(() => {
-    const fetchTodayCount = async () => {
+    const fetchInitialData = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
+      setUserId(user.id)
+
+      const { data: boardsData } = await supabase
+        .from('boards')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true })
+      
+      if (boardsData) setBoards(boardsData as Board[])
 
       const todayStr = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
 
@@ -162,8 +226,71 @@ export default function Sidebar() {
       setTodayCount(count ?? 0)
     }
 
-    fetchTodayCount()
+    fetchInitialData()
   }, [pathname, supabase]) // refresh on navigation
+
+  const handleCreateBoard = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newBoardTitle.trim()) return
+
+    let currentUserId = userId
+    if (!currentUserId) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        alert("Error: Usuario no autenticado.")
+        return
+      }
+      currentUserId = user.id
+      setUserId(user.id)
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('boards')
+        .insert({
+          user_id: currentUserId,
+          title: newBoardTitle.trim(),
+          description: ''
+        })
+        .select('*')
+        .single()
+
+      if (error) throw error
+
+      if (data) {
+        setBoards(prev => [...prev, data as Board])
+        setNewBoardTitle('')
+        setIsCreatingBoard(false)
+        router.push(`/dashboard?boardId=${data.id}`)
+        router.refresh()
+      }
+    } catch (err: any) {
+      console.error('Error creating board:', err)
+      alert(`Error al crear tablero: ${err?.message || 'Revisa que ejecutaste la migración 00012 en Supabase.'}`)
+    }
+  }
+
+  const handleAction = (action: string) => {
+    if (action === 'CREATE_BOARD') {
+      setIsCreatingBoard(true)
+    }
+  }
+
+  const navItems: NavItem[] = [
+    {
+      name: 'Mis Tableros',
+      icon: '📊',
+      subItems: [
+        ...boards.map(b => ({ name: b.title, href: `/dashboard?boardId=${b.id}` })),
+        { name: '+ Nuevo Tablero', action: 'CREATE_BOARD' }
+      ]
+    },
+    ...STATIC_NAV_ITEMS.map((item, idx) => ({
+      ...item,
+      icon: ['📆', '🔍', '🏆', '📈', '⚙️'][idx]
+    }))
+  ]
+
 
   return (
     <aside className="w-64 hidden md:flex flex-col border-r border-[var(--border)] bg-[var(--bg-surface)]">
@@ -189,8 +316,19 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto custom-scrollbar" aria-label="Navegación principal">
-        {NAV_ITEMS.map((item) => (
-          <NavGroup key={item.name} item={item} pathname={pathname} todayCount={todayCount} />
+        {navItems.map((item) => (
+          <NavGroup 
+            key={item.name} 
+            item={item as NavItem} 
+            pathname={pathname} 
+            todayCount={todayCount} 
+            onAction={handleAction} 
+            isCreatingBoard={isCreatingBoard}
+            newBoardTitle={newBoardTitle}
+            setNewBoardTitle={setNewBoardTitle}
+            handleCreateBoard={handleCreateBoard}
+            setIsCreatingBoard={setIsCreatingBoard}
+          />
         ))}
       </nav>
 

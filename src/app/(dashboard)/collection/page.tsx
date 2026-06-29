@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import CollectionGrid from '@/components/store/CollectionGrid'
+import type { UserPetCollection } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,7 +43,7 @@ export default async function CollectionPage() {
       </div>
 
       <CollectionGrid 
-        collection={collection || []} 
+        collection={(collection as unknown as UserPetCollection[]) || []} 
         activePetType={activePetType} 
       />
     </div>

@@ -25,6 +25,16 @@ export interface Column {
   created_at: string
 }
 
+// ── Board (maps to `boards` table) ───────────────────────────────────────────
+export interface Board {
+  id: string
+  user_id: string
+  title: string
+  description: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done'
 
 export interface TaskItem {
@@ -39,6 +49,7 @@ export interface TaskItem {
 export interface Task {
   id: string
   user_id: string
+  board_id: string
   title: string
   description: string | null
   status: TaskStatus
