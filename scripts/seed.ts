@@ -82,10 +82,10 @@ async function seed() {
   console.log("Insertando tareas de ejemplo...")
   const tasks = [
     { user_id: userId, title: 'Diseñar interfaz MVP', description: 'Crear wireframes en Figma', status: 'done', priority: 'high', category: 'Diseño', is_favorite: true },
-    { user_id: userId, title: 'Implementar Auth', description: 'Conectar con Supabase SSR', status: 'done', priority: 'urgent', category: 'Desarrollo' },
-    { user_id: userId, title: 'Configurar pasarela de pagos', description: 'Stripe webhook setup', status: 'in_progress', priority: 'high', category: 'Backend' },
-    { user_id: userId, title: 'Grabar video de demo', status: 'todo', priority: 'medium', category: 'Marketing' },
-    { user_id: userId, title: 'Revisar PRs del equipo', status: 'review', priority: 'low', category: 'Desarrollo' },
+    { user_id: userId, title: 'Implementar Auth', description: 'Conectar con Supabase SSR', status: 'done', priority: 'urgent', category: 'Desarrollo', is_favorite: false },
+    { user_id: userId, title: 'Configurar pasarela de pagos', description: 'Stripe webhook setup', status: 'in_progress', priority: 'high', category: 'Backend', is_favorite: false },
+    { user_id: userId, title: 'Grabar video de demo', status: 'todo', priority: 'medium', category: 'Marketing', is_favorite: false },
+    { user_id: userId, title: 'Revisar PRs del equipo', status: 'review', priority: 'low', category: 'Desarrollo', is_favorite: false },
   ]
 
   for (const task of tasks) {
