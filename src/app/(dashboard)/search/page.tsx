@@ -11,7 +11,7 @@ import EmptyState from '@/components/ui/EmptyState'
 const STATUS_OPTIONS: { value: TaskStatus; label: string; emoji: string }[] = [
   { value: 'todo',        label: 'Por hacer',   emoji: '📋' },
   { value: 'in_progress', label: 'En progreso', emoji: '🔄' },
-  { value: 'review',      label: 'Revisión',    emoji: '👀' },
+
   { value: 'done',        label: 'Completado',  emoji: '✅' },
 ]
 

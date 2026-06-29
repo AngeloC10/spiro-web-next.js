@@ -115,7 +115,7 @@ async function seed() {
     { user_id: userId, board_id: boardId, title: 'Implementar Auth', description: 'Conectar con Supabase SSR', status: 'done', priority: 'urgent', category: 'Desarrollo', is_favorite: false },
     { user_id: userId, board_id: boardId, title: 'Configurar pasarela de pagos', description: 'Stripe webhook setup', status: 'in_progress', priority: 'high', category: 'Backend', is_favorite: false },
     { user_id: userId, board_id: boardId, title: 'Grabar video de demo', description: '', status: 'todo', priority: 'medium', category: 'Marketing', is_favorite: false },
-    { user_id: userId, board_id: boardId, title: 'Revisar PRs del equipo', description: '', status: 'review', priority: 'low', category: 'Desarrollo', is_favorite: false },
+    { user_id: userId, board_id: boardId, title: 'Revisar PRs del equipo', description: '', status: 'in_progress', priority: 'low', category: 'Desarrollo', is_favorite: false },
   ]
 
   for (const task of tasks) {

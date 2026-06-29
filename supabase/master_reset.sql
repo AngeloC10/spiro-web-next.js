@@ -149,7 +149,7 @@ CREATE POLICY "Users can manage their own pets"
 -- ─────────────────────────────────────────────────────────────────────────────
 
 -- 1. Create task_status enum
-CREATE TYPE task_status AS ENUM ('todo', 'in_progress', 'review', 'done');
+CREATE TYPE task_status AS ENUM ('todo', 'in_progress', 'done');
 
 -- 2. Update tasks table to add new columns and drop column_id dependency
 ALTER TABLE public.tasks

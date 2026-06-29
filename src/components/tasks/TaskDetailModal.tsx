@@ -138,7 +138,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
               >
                 <option value="todo">Por hacer</option>
                 <option value="in_progress">En progreso</option>
-                <option value="review">En revisión</option>
+
                 <option value="done">Completado</option>
               </select>
             </div>

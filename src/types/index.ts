@@ -35,7 +35,7 @@ export interface Board {
   updated_at: string
 }
 
-export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done'
+export type TaskStatus = 'todo' | 'in_progress' | 'done'
 
 export interface TaskItem {
   id: string

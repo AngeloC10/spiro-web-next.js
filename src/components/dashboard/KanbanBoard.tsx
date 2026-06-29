@@ -13,7 +13,7 @@ import EmptyState from '@/components/ui/EmptyState'
 const COLUMNS: { id: TaskStatus; title: string; wipLimit?: number }[] = [
   { id: 'todo', title: 'Por hacer' },
   { id: 'in_progress', title: 'En progreso', wipLimit: 3 },
-  { id: 'review', title: 'En revisión', wipLimit: 2 },
+
   { id: 'done', title: 'Completado' },
 ]
 
