@@ -96,8 +96,7 @@ BEGIN
   INSERT INTO public.users (id, username)
   VALUES (
     new.id,
-    new.email,
-    new.raw_user_meta_data ->> 'name'
+    new.email
   );
   RETURN new;
 END;

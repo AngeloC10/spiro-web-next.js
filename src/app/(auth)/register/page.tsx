@@ -116,11 +116,13 @@ export default function RegisterPage() {
     })
 
     if (error) {
-      setServerError(
-        error.message.toLowerCase().includes('already registered')
-          ? 'Este email ya está registrado. ¿Quieres iniciar sesión?'
-          : error.message
-      )
+      let msg = error.message;
+      if (typeof msg !== 'string' || msg === '{}' || !msg) {
+        msg = 'Ocurrió un error inesperado al intentar registrarte (posible error de base de datos).';
+      } else if (msg.toLowerCase().includes('already registered')) {
+        msg = 'Este email ya está registrado. ¿Quieres iniciar sesión?';
+      }
+      setServerError(msg)
       return
     }
 

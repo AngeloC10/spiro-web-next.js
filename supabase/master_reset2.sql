@@ -1,4 +1,4 @@
-﻿DROP TABLE IF EXISTS public.task_items, public.tasks, public.columns, public.boards, public.user_pets_collection, public.purchases, public.store_items, public.user_settings, public.user_achievements, public.achievements, public.daily_rewards, public.streaks, public.pets, public.pet_stats, public.activity_history, public.profiles, public.users CASCADE;
+DROP TABLE IF EXISTS public.task_items, public.tasks, public.columns, public.boards, public.user_pets_collection, public.purchases, public.store_items, public.user_settings, public.user_achievements, public.achievements, public.daily_rewards, public.streaks, public.pets, public.pet_stats, public.activity_history, public.profiles, public.users CASCADE;
 
 DROP TYPE IF EXISTS public.task_priority CASCADE;
 DROP TYPE IF EXISTS public.pet_type CASCADE;
@@ -112,11 +112,10 @@ CREATE POLICY "Users can update own profile"
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, name)
+  INSERT INTO public.users (id, username)
   VALUES (
     new.id,
-    new.email,
-    new.raw_user_meta_data ->> 'name'
+    new.email
   );
   RETURN new;
 END;
