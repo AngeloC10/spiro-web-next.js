@@ -39,6 +39,12 @@ interface KanbanBoardProps {
 
 export default function KanbanBoard({ initialTasks, userId, petId, boardId }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
+
+  // Update tasks when initialTasks change (e.g. switching boards)
+  useEffect(() => {
+    setTasks(initialTasks)
+  }, [initialTasks])
+
   const supabase = createClient()
   const { addXpToday, pet } = usePetStore()
 
