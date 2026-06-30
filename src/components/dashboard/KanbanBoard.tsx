@@ -134,11 +134,19 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
         .update({ status: newStatus, position: destination.index, updated_at: new Date().toISOString() })
         .eq('id', draggableId)
 
-      if (!error && newStatus === 'done' && petId) {
-        setCompletedTaskId(draggableId)
-        setTimeout(() => setCompletedTaskId(null), 1500)
-        if (oldStatus !== 'done') {
-          awardXP(draggableId)
+      if (!error && newStatus === 'done') {
+        // Notify RecentActivity widget of the completed task
+        const completedTask = newTasks.find(t => t.id === draggableId)
+        if (completedTask) {
+          window.dispatchEvent(new CustomEvent('taskCompleted', { detail: { task: completedTask } }))
+        }
+
+        if (petId) {
+          setCompletedTaskId(draggableId)
+          setTimeout(() => setCompletedTaskId(null), 1500)
+          if (oldStatus !== 'done') {
+            awardXP(draggableId)
+          }
         }
       }
     }

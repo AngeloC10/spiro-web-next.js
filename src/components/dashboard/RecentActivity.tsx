@@ -1,37 +1,58 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { Task } from '@/types'
 import { CheckCircle2, Clock } from 'lucide-react'
 
-export default async function RecentActivity({ userId }: { userId: string }) {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-      },
+interface CompletedTaskEvent extends CustomEvent {
+  detail: { task: Task }
+}
+
+export default function RecentActivity({ userId }: { userId: string }) {
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClient()
+
+  const fetchRecentTasks = useCallback(async () => {
+    const yesterday = new Date()
+    yesterday.setHours(yesterday.getHours() - 24)
+    const yesterdayString = yesterday.toISOString()
+
+    const { data: recentTasks } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 'done')
+      .gte('updated_at', yesterdayString)
+      .order('updated_at', { ascending: false })
+      .limit(5)
+
+    setTasks((recentTasks as Task[]) || [])
+    setIsLoading(false)
+  }, [userId, supabase])
+
+  useEffect(() => {
+    fetchRecentTasks()
+  }, [fetchRecentTasks])
+
+  // Listen for taskCompleted events from the KanbanBoard
+  useEffect(() => {
+    const handleTaskCompleted = (e: Event) => {
+      const { task } = (e as CompletedTaskEvent).detail
+
+      setTasks(prev => {
+        // Add the newly completed task at the top
+        const filtered = prev.filter(t => t.id !== task.id)
+        const updated = [task, ...filtered]
+        // Keep only the 5 most recent
+        return updated.slice(0, 5)
+      })
     }
-  )
 
-  const yesterday = new Date()
-  yesterday.setHours(yesterday.getHours() - 24)
-  const yesterdayString = yesterday.toISOString()
-
-  // Fetch tasks for the user that are done and updated in the last 24 hours
-  const { data: recentTasks } = await supabase
-    .from('tasks')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('status', 'done')
-    .gte('updated_at', yesterdayString)
-    .order('updated_at', { ascending: false })
-    .limit(5)
-
-  const tasks = (recentTasks as Task[]) || []
+    window.addEventListener('taskCompleted', handleTaskCompleted)
+    return () => window.removeEventListener('taskCompleted', handleTaskCompleted)
+  }, [])
 
   return (
     <div className="relative group overflow-hidden bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm transition-all duration-500 hover:shadow-lg hover:border-indigo-500/30">
@@ -47,7 +68,19 @@ export default async function RecentActivity({ userId }: { userId: string }) {
         </span>
       </h3>
       
-      {tasks.length === 0 ? (
+      {isLoading ? (
+        <div className="relative space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="flex items-center gap-3.5 p-3 -mx-3">
+              <div className="w-6 h-6 rounded-full bg-[var(--border)] animate-pulse shrink-0" />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-3.5 w-3/4 rounded bg-[var(--border)] animate-pulse" />
+                <div className="h-2.5 w-1/3 rounded bg-[var(--border)] animate-pulse opacity-50" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : tasks.length === 0 ? (
         <div className="relative flex flex-col items-center justify-center py-8 text-center space-y-4">
           <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[var(--border)] to-[var(--card-bg)] flex items-center justify-center ring-1 ring-[var(--border)] shadow-inner">
             <CheckCircle2 className="w-6 h-6 text-[var(--text-muted)] opacity-50 animate-pulse" />
@@ -58,7 +91,7 @@ export default async function RecentActivity({ userId }: { userId: string }) {
         </div>
       ) : (
         <ul className="relative space-y-2">
-          {tasks.map((task, index) => {
+          {tasks.map((task) => {
             const updatedDate = new Date(task.updated_at)
             const timeString = updatedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             const isToday = new Date().toDateString() === updatedDate.toDateString()
@@ -66,7 +99,7 @@ export default async function RecentActivity({ userId }: { userId: string }) {
             return (
               <li 
                 key={task.id} 
-                className="group/item flex items-start gap-3.5 text-sm p-3 -mx-3 rounded-xl transition-all duration-300 hover:bg-white/5 dark:hover:bg-black/20 hover:scale-[1.02] cursor-default border border-transparent hover:border-[var(--border)]/50 hover:shadow-sm"
+                className="group/item flex items-start gap-3.5 text-sm p-3 -mx-3 rounded-xl transition-all duration-300 hover:bg-white/5 dark:hover:bg-black/20 hover:scale-[1.02] cursor-default border border-transparent hover:border-[var(--border)]/50 hover:shadow-sm animate-in fade-in slide-in-from-top-2 duration-500"
               >
                 <div className="relative mt-0.5 shrink-0">
                   <div className="absolute inset-0 rounded-full bg-green-500/20 animate-ping opacity-0 group-hover/item:opacity-100" style={{ animationDuration: '2s' }} />
