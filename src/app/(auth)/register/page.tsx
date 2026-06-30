@@ -136,7 +136,7 @@ export default function RegisterPage() {
     setServerError(null)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=/onboarding` },
     })
     if (error) {
       setServerError('No se pudo conectar con Google. Inténtalo de nuevo.')
