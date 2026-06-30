@@ -9,6 +9,8 @@ export default function ProfilePage() {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [password, setPassword] = useState('')
+  const [authProvider, setAuthProvider] = useState<string>('email')
   
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -29,6 +31,9 @@ export default function ProfilePage() {
       if (!user) return
 
       setEmail(user.email ?? '')
+
+      const provider = user.app_metadata?.provider || 'email'
+      setAuthProvider(provider)
 
       const { data: profile } = await supabase
         .from('users')
@@ -54,12 +59,6 @@ export default function ProfilePage() {
     if (!user) return
 
     try {
-      // Update email via auth (might require email confirmation depending on Supabase settings)
-      if (email !== user.email) {
-        const { error: authError } = await supabase.auth.updateUser({ email })
-        if (authError) throw authError
-      }
-
       // Update username
       const { error: dbError } = await supabase
         .from('users')
@@ -67,6 +66,14 @@ export default function ProfilePage() {
         .eq('id', user.id)
 
       if (dbError) throw dbError
+
+      // Update password if provided and user uses email auth
+      if (password && authProvider === 'email') {
+        const { error: authError } = await supabase.auth.updateUser({ password })
+        if (authError) throw authError
+        // Clear password field after successful update
+        setPassword('')
+      }
 
       setMessage({ type: 'success', text: 'Perfil actualizado con éxito.' })
     } catch (err: any) {
@@ -213,14 +220,28 @@ export default function ProfilePage() {
               <input
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+                disabled
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-muted)] opacity-70 cursor-not-allowed focus:outline-none transition-all"
               />
               <p className="text-xs text-[var(--text-muted)] mt-2">
-                Nota: Cambiar tu email puede requerir confirmación enviada a ambas direcciones.
+                El correo electrónico no se puede cambiar.
               </p>
             </div>
+
+            {authProvider === 'email' && (
+              <div>
+                <label className="block text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                  Nueva Contraseña (Opcional)
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Deja en blanco para no cambiarla"
+                  className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+                />
+              </div>
+            )}
 
             <div className="flex justify-end pt-4">
               <button
