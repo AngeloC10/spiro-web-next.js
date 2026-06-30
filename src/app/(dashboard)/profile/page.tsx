@@ -14,7 +14,6 @@ export default function ProfilePage() {
   
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
   
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [deleting, setDeleting] = useState(false)
@@ -83,48 +82,6 @@ export default function ProfilePage() {
     }
   }
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return
-    const file = e.target.files[0]
-    setUploading(true)
-    setMessage(null)
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Usuario no autenticado')
-
-      const fileExt = file.name.split('.').pop()
-      const filePath = `${user.id}/avatar.${fileExt}`
-
-      // Upload to 'avatars' bucket
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, { upsert: true })
-
-      if (uploadError) throw uploadError
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath)
-
-      // Update users table
-      const { error: dbError } = await supabase
-        .from('users')
-        .update({ avatar_url: publicUrl })
-        .eq('id', user.id)
-
-      if (dbError) throw dbError
-
-      setAvatarUrl(publicUrl)
-      setMessage({ type: 'success', text: 'Avatar subido con éxito.' })
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Error al subir el avatar.' })
-    } finally {
-      setUploading(false)
-    }
-  }
-
   const handleDeleteAccount = async () => {
     if (deleteConfirmText !== 'ELIMINAR') return
     setDeleting(true)
@@ -179,22 +136,6 @@ export default function ProfilePage() {
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-4xl">👤</div>
               )}
-            </div>
-            <div>
-              <input 
-                type="file" 
-                id="avatar-upload" 
-                accept="image/*" 
-                className="hidden" 
-                onChange={handleAvatarUpload} 
-                disabled={uploading}
-              />
-              <label 
-                htmlFor="avatar-upload" 
-                className="cursor-pointer text-sm font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors px-4 py-2 rounded-lg bg-[rgba(0,172,193,0.1)] hover:bg-[rgba(0,172,193,0.2)]"
-              >
-                {uploading ? 'Subiendo...' : 'Cambiar Avatar'}
-              </label>
             </div>
           </div>
 
