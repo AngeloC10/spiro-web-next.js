@@ -50,7 +50,7 @@ export default async function StoreItemDetailPage({
       .eq('user_id', user.id)
       .eq('item_id', itemId)
       .single()
-      
+
     if (collection) {
       isOwned = true
     }
@@ -65,7 +65,7 @@ export default async function StoreItemDetailPage({
       </Link>
 
       <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
-        
+
         {/* Left: Big Preview */}
         <div className={`md:w-1/2 p-12 flex items-center justify-center relative bg-gradient-to-br from-transparent to-[var(--column-bg)] border-b md:border-b-0 md:border-r ${rColors.border}`}>
           <div className="absolute top-6 left-6">
@@ -73,10 +73,10 @@ export default async function StoreItemDetailPage({
               {item.rarity}
             </span>
           </div>
-          
+
           <div className="relative w-full aspect-square max-w-[300px] drop-shadow-2xl hover:scale-105 transition-transform duration-500">
-            <Image 
-              src={item.preview_url} 
+            <Image
+              src={item.preview_url}
               alt={item.name}
               fill
               className="object-contain"
@@ -92,9 +92,9 @@ export default async function StoreItemDetailPage({
               {TYPE_LABELS[item.type as StoreItemType]}
             </span>
           </div>
-          
+
           <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-4">{item.name}</h1>
-          
+
           <div className="text-4xl font-black text-[var(--accent)] mb-8">
             ${item.price_usd}
           </div>

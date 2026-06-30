@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function StorePage() {
   const supabase = await createClient()
-  
+
   // Fetch active store items
   const { data: items } = await supabase
     .from('store_items')
@@ -15,14 +15,14 @@ export default async function StorePage() {
 
   // Fetch current user and their collection
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   let ownedItemIds: string[] = []
   if (user) {
     const { data: collection } = await supabase
       .from('user_pets_collection')
       .select('item_id')
       .eq('user_id', user.id)
-      
+
     if (collection) {
       ownedItemIds = collection.map(c => c.item_id)
     }
@@ -40,8 +40,8 @@ export default async function StorePage() {
         </p>
       </div>
 
-      <StoreCatalog 
-        items={items || []} 
+      <StoreCatalog
+        items={items || []}
         ownedItemIds={ownedItemIds}
       />
     </div>

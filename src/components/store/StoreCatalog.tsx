@@ -51,7 +51,7 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
     <div className="animate-fade-in-up">
       {/* Filters */}
       <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-5 mb-8 flex flex-col md:flex-row gap-6">
-        
+
         {/* Type Filter */}
         <div className="flex-1">
           <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">Tipo</p>
@@ -60,11 +60,10 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
               <button
                 key={type}
                 onClick={() => setFilterType(type as StoreItemType | 'all')}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  filterType === type 
-                    ? 'bg-[var(--accent)] text-white shadow-md shadow-[rgba(0,172,193,0.3)]' 
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${filterType === type
+                    ? 'bg-[var(--accent)] text-white shadow-md shadow-[rgba(0,172,193,0.3)]'
                     : 'bg-[var(--tag-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)]'
-                }`}
+                  }`}
               >
                 {type === 'all' ? 'Todos' : TYPE_LABELS[type as StoreItemType]}
               </button>
@@ -80,13 +79,12 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
               <button
                 key={rarity}
                 onClick={() => setFilterRarity(rarity as ItemRarity | 'all')}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${
-                  filterRarity === rarity 
-                    ? rarity !== 'all' 
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${filterRarity === rarity
+                    ? rarity !== 'all'
                       ? RARITY_COLORS[rarity as ItemRarity].bg + ' ' + RARITY_COLORS[rarity as ItemRarity].text + ' ' + RARITY_COLORS[rarity as ItemRarity].border
                       : 'bg-slate-700 text-white border-slate-600'
                     : 'bg-[var(--tag-bg)] border-transparent text-[var(--text-secondary)] hover:bg-[var(--hover-bg)]'
-                }`}
+                  }`}
               >
                 {rarity === 'all' ? 'Todas' : rarity === 'common' ? 'Común' : rarity === 'rare' ? 'Raro' : 'Épico'}
               </button>
@@ -130,15 +128,15 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
                     </span>
                   </div>
                   <div className="relative w-full h-full transform group-hover:scale-110 transition-transform duration-500 drop-shadow-2xl">
-                    <Image 
-                      src={item.preview_url} 
+                    <Image
+                      src={item.preview_url}
                       alt={item.name}
                       fill
                       className="object-contain"
                     />
                   </div>
                 </div>
-                
+
                 <div className="p-5 flex flex-col flex-1">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-lg font-bold text-[var(--text-primary)]">{item.name}</h3>
@@ -147,7 +145,7 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
                   <p className="text-sm text-[var(--text-secondary)] mb-6 flex-1 line-clamp-2">
                     {item.description}
                   </p>
-                  
+
                   {isOwned ? (
                     <button disabled className="w-full py-2.5 rounded-xl font-semibold bg-[var(--tag-bg)] text-[var(--text-muted)] border border-[var(--border)] cursor-not-allowed">
                       Ya lo tienes

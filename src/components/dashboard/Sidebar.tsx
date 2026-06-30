@@ -27,8 +27,6 @@ const STATIC_NAV_ITEMS: Omit<NavItem, 'icon'>[] = [
       { name: 'Mi Mascota',  href: '/pet' },
       { name: 'Logros',      href: '/achievements' },
       { name: 'Recompensas', href: '/rewards' },
-      { name: 'Tienda',      href: '/store' },
-      { name: 'Colección',   href: '/collection' },
   ]},
   { name: 'Rendimiento', subItems: [
       { name: 'Estadísticas',href: '/stats' },
