@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic'
 export default async function StoreItemDetailPage({
   params
 }: {
-  params: Promise<{ itemId: string }> | { itemId: string }
+  params: Promise<{ itemId: string }>
 }) {
   const resolvedParams = await params
   const { itemId } = resolvedParams
