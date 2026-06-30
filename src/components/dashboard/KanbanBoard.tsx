@@ -230,10 +230,10 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
       <div className="flex gap-6 min-h-[500px] h-[calc(100vh-12rem)] overflow-x-auto pb-6 pr-2">
         {[1, 2, 3, 4].map(i => (
           <div key={i} className="flex flex-col w-80 shrink-0">
-            <div className="h-6 w-32 bg-[rgba(255,255,255,0.1)] rounded mb-3 animate-pulse"></div>
-            <div className="flex-1 bg-[rgba(255,255,255,0.02)] rounded-2xl p-3 border border-transparent">
+            <div className="h-6 w-32 bg-[var(--skeleton-bg)] rounded mb-3 animate-pulse"></div>
+            <div className="flex-1 bg-[var(--column-bg)] rounded-2xl p-3 border border-transparent">
               {[1, 2].map(j => (
-                <div key={j} className="h-28 bg-[rgba(255,255,255,0.05)] rounded-xl mb-3 animate-pulse"></div>
+                <div key={j} className="h-28 bg-[var(--skeleton-bg)] rounded-xl mb-3 animate-pulse"></div>
               ))}
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
       )}
 
       {tasks.length === 0 ? (
-        <div className="h-[calc(100vh-12rem)] border border-dashed border-[var(--border)] rounded-3xl bg-[rgba(255,255,255,0.02)]">
+        <div className="h-[calc(100vh-12rem)] border border-dashed border-[var(--border)] rounded-3xl bg-[var(--column-bg)]">
           <EmptyState
             illustration="📋"
             title="Tablero Limpio"
@@ -295,7 +295,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`flex-1 min-h-[150px] bg-[rgba(0,0,0,0.1)] rounded-2xl p-3 border ${
+                      className={`flex-1 min-h-[150px] bg-[var(--column-bg)] rounded-2xl p-3 border ${
                         snapshot.isDraggingOver ? 'border-[var(--accent)] bg-[rgba(0,172,193,0.05)]' : 'border-transparent'
                       } transition-colors`}
                     >
@@ -324,7 +324,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 onClick={() => setSelectedTask(task)}
-                                className={`relative mb-3 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:border-[rgba(255,255,255,0.15)] transition-colors cursor-pointer border-l-4 ${
+                                className={`relative mb-3 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:border-[var(--border)] transition-colors cursor-pointer border-l-4 ${
                                   PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.medium
                                 } ${snapshot.isDragging ? 'shadow-xl shadow-[rgba(0,172,193,0.15)] rotate-2 border-[var(--accent)] z-50' : ''}`}
                               >
@@ -340,7 +340,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
                                 </div>
                                 
                                 {task.category && (
-                                  <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-[rgba(255,255,255,0.05)] text-[var(--text-secondary)] mb-3">
+                                  <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-[var(--tag-bg)] text-[var(--text-secondary)] mb-3">
                                     {task.category}
                                   </span>
                                 )}
@@ -350,7 +350,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
                                     <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] mb-1 font-medium">
                                       <span>{completedItems}/{items.length} subitems</span>
                                     </div>
-                                    <div className="h-1 w-full bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                                    <div className="h-1 w-full bg-[var(--progress-track)] rounded-full overflow-hidden">
                                       <div 
                                         className="h-full bg-[var(--accent)] transition-all"
                                         style={{ width: `${progress}%` }}

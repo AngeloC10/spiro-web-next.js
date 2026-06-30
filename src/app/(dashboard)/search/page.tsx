@@ -42,12 +42,12 @@ function TaskCard({ task }: { task: Task }) {
   }
 
   return (
-    <div className="group bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-5 hover:border-[rgba(255,255,255,0.15)] hover:shadow-lg hover:shadow-[rgba(0,172,193,0.08)] transition-all duration-200 animate-fade-in-up">
+    <div className="group bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-5 hover:border-[var(--accent)] hover:shadow-lg hover:shadow-[rgba(0,172,193,0.08)] transition-all duration-200 animate-fade-in-up">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             {task.category && (
-              <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[rgba(255,255,255,0.06)] text-[var(--text-secondary)] border border-[var(--border)]">
+              <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[var(--tag-bg)] text-[var(--text-secondary)] border border-[var(--border)]">
                 {task.category}
               </span>
             )}
@@ -204,7 +204,7 @@ export default function SearchPage() {
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
                   filters.status === opt.value
                     ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-md shadow-[rgba(0,172,193,0.25)]'
-                    : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[rgba(255,255,255,0.2)] hover:text-[var(--text-primary)]'
+                    : 'bg-[var(--input-bg)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 <span>{opt.emoji}</span>
@@ -226,7 +226,7 @@ export default function SearchPage() {
                 className={`px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-all duration-200 ${
                   filters.priority === opt.value
                     ? opt.color + ' shadow-sm scale-105'
-                    : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[rgba(255,255,255,0.2)] hover:text-[var(--text-primary)]'
+                    : 'bg-[var(--input-bg)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 {opt.label}
@@ -248,7 +248,7 @@ export default function SearchPage() {
                   className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
                     filters.category === cat
                       ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-md shadow-[rgba(0,172,193,0.25)]'
-                      : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[rgba(255,255,255,0.2)] hover:text-[var(--text-primary)]'
+                      : 'bg-[var(--input-bg)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   🏷️ {cat}

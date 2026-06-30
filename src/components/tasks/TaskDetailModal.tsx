@@ -109,7 +109,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
               value={localTask.title}
               onChange={(e) => setLocalTask({ ...localTask, title: e.target.value })}
               onBlur={(e) => handleFieldUpdate('title', e.target.value)}
-              className="w-full bg-transparent text-xl font-bold text-[var(--text-primary)] border-none outline-none focus:ring-0 px-0 hover:bg-[rgba(255,255,255,0.05)] rounded transition-colors"
+              className="w-full bg-transparent text-xl font-bold text-[var(--text-primary)] border-none outline-none focus:ring-0 px-0 hover:bg-[var(--hover-bg)] rounded transition-colors"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
               <select
                 value={localTask.status}
                 onChange={(e) => handleFieldUpdate('status', e.target.value)}
-                className="form-input py-1.5 text-sm w-full bg-[rgba(255,255,255,0.03)] border-transparent"
+                className="form-input py-1.5 text-sm w-full bg-[var(--input-bg)] border-transparent"
               >
                 <option value="todo">Por hacer</option>
                 <option value="in_progress">En progreso</option>
@@ -147,7 +147,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
               <select
                 value={localTask.priority}
                 onChange={(e) => handleFieldUpdate('priority', e.target.value)}
-                className="form-input py-1.5 text-sm w-full bg-[rgba(255,255,255,0.03)] border-transparent"
+                className="form-input py-1.5 text-sm w-full bg-[var(--input-bg)] border-transparent"
               >
                 <option value="low">Baja</option>
                 <option value="medium">Media</option>
@@ -163,7 +163,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
                 onChange={(e) => setLocalTask({ ...localTask, category: e.target.value })}
                 onBlur={(e) => handleFieldUpdate('category', e.target.value)}
                 placeholder="Sin categoría"
-                className="form-input py-1.5 text-sm w-full bg-[rgba(255,255,255,0.03)] border-transparent placeholder:text-[var(--text-muted)]"
+                className="form-input py-1.5 text-sm w-full bg-[var(--input-bg)] border-transparent placeholder:text-[var(--text-muted)]"
               />
             </div>
             <div>
@@ -172,7 +172,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
                 type="date"
                 value={localTask.due_date ? localTask.due_date.split('T')[0] : ''}
                 onChange={(e) => handleFieldUpdate('due_date', e.target.value ? new Date(e.target.value).toISOString() : null)}
-                className="form-input py-1.5 text-sm w-full bg-[rgba(255,255,255,0.03)] border-transparent text-[var(--text-secondary)]"
+                className="form-input py-1.5 text-sm w-full bg-[var(--input-bg)] border-transparent text-[var(--text-secondary)]"
               />
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
               onChange={(e) => setLocalTask({ ...localTask, description: e.target.value })}
               onBlur={(e) => handleFieldUpdate('description', e.target.value)}
               placeholder="Añade una descripción más detallada..."
-              className="form-input w-full min-h-[100px] resize-y bg-[rgba(255,255,255,0.02)] border-[rgba(255,255,255,0.05)] focus:bg-[rgba(255,255,255,0.04)]"
+              className="form-input w-full min-h-[100px] resize-y bg-[var(--input-bg)] border-[var(--border)] focus:bg-[var(--hover-bg)]"
             />
           </div>
 
@@ -200,7 +200,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
 
             {/* Progress Bar */}
             {items.length > 0 && (
-              <div className="h-1.5 w-full bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden mb-4">
+              <div className="h-1.5 w-full bg-[var(--progress-track)] rounded-full overflow-hidden mb-4">
                 <div 
                   className="h-full bg-[var(--accent)] transition-all duration-300"
                   style={{ width: `${progress}%` }}
@@ -215,7 +215,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
                     type="checkbox"
                     checked={item.completed}
                     onChange={(e) => handleToggleItem(item.id, e.target.checked)}
-                    className="w-4 h-4 rounded border-[rgba(255,255,255,0.2)] bg-transparent text-[var(--accent)] focus:ring-[var(--accent)] focus:ring-offset-0 cursor-pointer"
+                    className="w-4 h-4 rounded border-[var(--border)] bg-transparent text-[var(--accent)] focus:ring-[var(--accent)] focus:ring-offset-0 cursor-pointer"
                   />
                   <span className={`flex-1 text-sm transition-colors ${item.completed ? 'text-[var(--text-muted)] line-through' : 'text-[var(--text-secondary)]'}`}>
                     {item.text}
@@ -237,14 +237,14 @@ export default function TaskDetailModal({ task, onClose, onUpdate, onDelete, onT
               onChange={(e) => setNewItemText(e.target.value)}
               onKeyDown={handleAddItem}
               placeholder="Añadir un elemento y presionar Enter"
-              className="form-input py-2 text-sm w-full bg-transparent border-dashed border-[rgba(255,255,255,0.15)] focus:border-solid focus:border-[var(--accent)]"
+              className="form-input py-2 text-sm w-full bg-transparent border-dashed border-[var(--border)] focus:border-solid focus:border-[var(--accent)]"
             />
           </div>
 
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[var(--border)] flex justify-between bg-[rgba(0,0,0,0.2)] rounded-b-2xl">
+        <div className="p-4 border-t border-[var(--border)] flex justify-between bg-[var(--input-bg)] rounded-b-2xl">
           {showConfirmDelete ? (
             <div className="flex items-center gap-3 animate-fade-in">
               <span className="text-sm text-[var(--text-secondary)]">¿Seguro que quieres borrarla?</span>

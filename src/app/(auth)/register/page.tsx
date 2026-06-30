@@ -245,7 +245,7 @@ export default function RegisterPage() {
                       background:
                         i <= strength.score
                           ? strength.color
-                          : 'rgba(255,255,255,0.08)',
+                          : 'var(--border)',
                     }}
                   />
                 ))}

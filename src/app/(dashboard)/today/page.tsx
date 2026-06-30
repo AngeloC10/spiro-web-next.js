@@ -105,7 +105,7 @@ export default async function TodayPage() {
 
         {/* Priority summary pills */}
         {totalCount > 0 && (
-          <div className="flex flex-wrap gap-2 mt-5 pt-5 border-t border-[rgba(255,255,255,0.08)]">
+          <div className="flex flex-wrap gap-2 mt-5 pt-5 border-t border-[var(--border)]">
             {(['urgent', 'high', 'medium', 'low'] as Priority[]).map(p => {
               const count = tasks.filter(t => t.priority === p).length
               if (count === 0) return null

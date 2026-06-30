@@ -53,7 +53,7 @@ export default function Header() {
         {streakLoaded && (
           <Link
             href="/stats"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold transition-all hover:bg-[rgba(255,255,255,0.05)] ${streakColor}`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold transition-all hover:bg-[var(--hover-bg)] ${streakColor}`}
             title={streak > 0 ? `${streak} días seguidos` : 'Sin racha activa'}
           >
             <span className={streak === 0 ? 'grayscale opacity-50' : ''} style={{ fontSize: '1.1rem' }}>

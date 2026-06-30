@@ -146,7 +146,7 @@ export default function ProductivityStatsPage() {
               className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-colors ${
                 range === r 
                   ? 'bg-[var(--accent)] text-white shadow-md' 
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.05)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)]'
               }`}
             >
               {r === '7d' ? '7 Días' : r === '30d' ? '30 Días' : '3 Meses'}
@@ -198,7 +198,7 @@ export default function ProductivityStatsPage() {
                   <XAxis dataKey="date" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <Tooltip 
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    cursor={{ fill: 'var(--hover-bg)' }}
                     contentStyle={{ backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(0,172,193,0.2)', borderRadius: '12px', color: '#fff' }}
                   />
                   <Bar dataKey="tareas" fill="#00ACC1" radius={[4, 4, 0, 0]} />
@@ -241,7 +241,7 @@ export default function ProductivityStatsPage() {
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={lineData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                   <XAxis dataKey="day" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <Tooltip 

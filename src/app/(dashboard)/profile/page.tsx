@@ -166,7 +166,7 @@ export default function ProfilePage() {
         <div className="flex flex-col sm:flex-row gap-8 mb-8">
           {/* Avatar Section */}
           <div className="flex flex-col items-center gap-4">
-            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[var(--border)] bg-[rgba(255,255,255,0.05)]">
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[var(--border)] bg-[var(--tag-bg)]">
               {avatarUrl ? (
                 <Image src={avatarUrl} alt="Avatar" fill className="object-cover" />
               ) : (
@@ -202,7 +202,7 @@ export default function ProfilePage() {
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 required
-                className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
               />
             </div>
             
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
               />
               <p className="text-xs text-[var(--text-muted)] mt-2">
                 Nota: Cambiar tu email puede requerir confirmación enviada a ambas direcciones.
@@ -262,7 +262,7 @@ export default function ProfilePage() {
               value={deleteConfirmText}
               onChange={e => setDeleteConfirmText(e.target.value)}
               placeholder="ELIMINAR"
-              className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] mb-6 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+              className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] mb-6 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
             />
             <div className="flex justify-end gap-3">
               <button
@@ -271,7 +271,7 @@ export default function ProfilePage() {
                   setDeleteConfirmText('')
                 }}
                 disabled={deleting}
-                className="px-5 py-2.5 rounded-xl font-semibold text-[var(--text-secondary)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+                className="px-5 py-2.5 rounded-xl font-semibold text-[var(--text-secondary)] hover:bg-[var(--hover-bg)] transition-colors"
               >
                 Cancelar
               </button>

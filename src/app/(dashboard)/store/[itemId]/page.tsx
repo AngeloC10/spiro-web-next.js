@@ -67,7 +67,7 @@ export default async function StoreItemDetailPage({
       <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
         
         {/* Left: Big Preview */}
-        <div className={`md:w-1/2 p-12 flex items-center justify-center relative bg-gradient-to-br from-transparent to-[rgba(0,0,0,0.2)] border-b md:border-b-0 md:border-r ${rColors.border}`}>
+        <div className={`md:w-1/2 p-12 flex items-center justify-center relative bg-gradient-to-br from-transparent to-[var(--column-bg)] border-b md:border-b-0 md:border-r ${rColors.border}`}>
           <div className="absolute top-6 left-6">
             <span className={`text-xs uppercase tracking-widest font-black px-3 py-1.5 rounded border shadow-sm ${rColors.bg} ${rColors.text} ${rColors.border}`}>
               {item.rarity}
@@ -104,7 +104,7 @@ export default async function StoreItemDetailPage({
           </p>
 
           {isOwned ? (
-            <div className="bg-[rgba(255,255,255,0.05)] border border-[var(--border)] rounded-2xl p-6 text-center">
+            <div className="bg-[var(--tag-bg)] border border-[var(--border)] rounded-2xl p-6 text-center">
               <span className="text-2xl mb-2 block">🎒</span>
               <p className="font-bold text-[var(--text-primary)]">Ya posees este artículo</p>
               <p className="text-sm text-[var(--text-secondary)] mb-4">Puedes equiparlo desde tu colección.</p>

@@ -8,7 +8,6 @@ interface UserSettings {
   dark_mode: boolean
   sleep_start: string
   sleep_end: string
-  notifications_email: boolean
 }
 
 export default function SettingsPage() {
@@ -16,10 +15,9 @@ export default function SettingsPage() {
   const supabase = createClient()
   
   const [settings, setSettings] = useState<UserSettings>({
-    dark_mode: true,
+    dark_mode: false,
     sleep_start: '23:00',
-    sleep_end: '07:00',
-    notifications_email: true
+    sleep_end: '07:00'
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -38,14 +36,14 @@ export default function SettingsPage() {
 
       if (data && !error) {
         setSettings({
-          dark_mode: data.dark_mode,
+          dark_mode: data.dark_mode ?? false,
           sleep_start: data.sleep_start,
-          sleep_end: data.sleep_end,
-          notifications_email: data.notifications_email
+          sleep_end: data.sleep_end
         })
         setTheme(data.dark_mode ? 'dark' : 'light')
       } else if (error && error.code === 'PGRST116') {
-        // No settings found, default to state above
+        // No settings found, default to state above (light mode)
+        setTheme('light')
       }
       setLoading(false)
     }
@@ -57,12 +55,6 @@ export default function SettingsPage() {
     setSettings(prev => ({ ...prev, dark_mode: newDarkMode }))
     setTheme(newDarkMode ? 'dark' : 'light')
     await updateSetting('dark_mode', newDarkMode)
-  }
-
-  const handleToggleEmail = async () => {
-    const newVal = !settings.notifications_email
-    setSettings(prev => ({ ...prev, notifications_email: newVal }))
-    await updateSetting('notifications_email', newVal)
   }
 
   const handleTimeChange = (field: 'sleep_start' | 'sleep_end', value: string) => {
@@ -81,8 +73,6 @@ export default function SettingsPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      // upsert requires the exact structure to avoid overwriting missing fields with null if we don't provide them,
-      // but since we keep the whole state, we can just upsert the whole state
       const { error } = await supabase
         .from('user_settings')
         .upsert({
@@ -123,7 +113,7 @@ export default function SettingsPage() {
             <span>🎨</span> Apariencia y Preferencias
           </h2>
           
-          <div className="flex items-center justify-between py-3 border-b border-[var(--border)]">
+          <div className="flex items-center justify-between py-3">
             <div>
               <p className="font-semibold text-[var(--text-primary)]">Modo Oscuro</p>
               <p className="text-sm text-[var(--text-secondary)]">Activa el tema oscuro en toda la aplicación.</p>
@@ -131,28 +121,11 @@ export default function SettingsPage() {
             <button
               onClick={handleToggleTheme}
               className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors ${
-                settings.dark_mode ? 'bg-[var(--accent)]' : 'bg-slate-300 dark:bg-slate-600'
+                settings.dark_mode ? 'bg-[var(--accent)]' : 'bg-slate-300'
               }`}
             >
               <div className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform ${
                 settings.dark_mode ? 'translate-x-6' : 'translate-x-0'
-              }`} />
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="font-semibold text-[var(--text-primary)]">Notificaciones por Email</p>
-              <p className="text-sm text-[var(--text-secondary)]">Recibe recordatorios y reportes semanales.</p>
-            </div>
-            <button
-              onClick={handleToggleEmail}
-              className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors ${
-                settings.notifications_email ? 'bg-[var(--accent)]' : 'bg-slate-300 dark:bg-slate-600'
-              }`}
-            >
-              <div className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform ${
-                settings.notifications_email ? 'translate-x-6' : 'translate-x-0'
               }`} />
             </button>
           </div>
@@ -177,7 +150,7 @@ export default function SettingsPage() {
                 value={settings.sleep_start}
                 onChange={e => handleTimeChange('sleep_start', e.target.value)}
                 onBlur={() => handleTimeBlur('sleep_start')}
-                className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
               />
             </div>
             <div className="flex-1">
@@ -189,7 +162,7 @@ export default function SettingsPage() {
                 value={settings.sleep_end}
                 onChange={e => handleTimeChange('sleep_end', e.target.value)}
                 onBlur={() => handleTimeBlur('sleep_end')}
-                className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
               />
             </div>
           </div>

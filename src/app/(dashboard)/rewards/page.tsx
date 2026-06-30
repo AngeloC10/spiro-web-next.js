@@ -165,7 +165,7 @@ export default function RewardsPage() {
 
           <button
             onClick={handleReset}
-            className="px-8 py-3 rounded-xl text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.06)] border border-[var(--border)] transition-all"
+            className="px-8 py-3 rounded-xl text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)] border border-[var(--border)] transition-all"
           >
             Cerrar
           </button>
@@ -176,8 +176,8 @@ export default function RewardsPage() {
           <div
             className="relative rounded-3xl overflow-hidden p-10 text-center mb-6"
             style={{
-              background: 'linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(22,33,62,0.95) 100%)',
-              border: canClaim ? '1px solid rgba(0,172,193,0.4)' : '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--bg-surface)',
+              border: canClaim ? '1px solid rgba(0,172,193,0.4)' : '1px solid var(--border)',
               boxShadow: canClaim ? '0 0 40px rgba(0,172,193,0.15)' : 'none',
             }}
           >
@@ -227,8 +227,8 @@ export default function RewardsPage() {
                 background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%)',
                 boxShadow: '0 4px 24px rgba(0,172,193,0.4)',
               } : {
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--hover-bg)',
+                border: '1px solid var(--border)',
               }}
             >
               {claiming ? (

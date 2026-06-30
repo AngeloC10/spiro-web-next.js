@@ -63,7 +63,7 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   filterType === type 
                     ? 'bg-[var(--accent)] text-white shadow-md shadow-[rgba(0,172,193,0.3)]' 
-                    : 'bg-[rgba(255,255,255,0.05)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.1)]'
+                    : 'bg-[var(--tag-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)]'
                 }`}
               >
                 {type === 'all' ? 'Todos' : TYPE_LABELS[type as StoreItemType]}
@@ -85,7 +85,7 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
                     ? rarity !== 'all' 
                       ? RARITY_COLORS[rarity as ItemRarity].bg + ' ' + RARITY_COLORS[rarity as ItemRarity].text + ' ' + RARITY_COLORS[rarity as ItemRarity].border
                       : 'bg-slate-700 text-white border-slate-600'
-                    : 'bg-[rgba(255,255,255,0.05)] border-transparent text-[var(--text-secondary)] hover:bg-[rgba(255,255,255,0.1)]'
+                    : 'bg-[var(--tag-bg)] border-transparent text-[var(--text-secondary)] hover:bg-[var(--hover-bg)]'
                 }`}
               >
                 {rarity === 'all' ? 'Todas' : rarity === 'common' ? 'Común' : rarity === 'rare' ? 'Raro' : 'Épico'}
@@ -100,7 +100,7 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)]"
+            className="bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)]"
           >
             <option value="price_asc">Precio: Menor a Mayor</option>
             <option value="price_desc">Precio: Mayor a Menor</option>
@@ -122,8 +122,8 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
             const rColors = RARITY_COLORS[item.rarity]
 
             return (
-              <div key={item.id} className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[rgba(255,255,255,0.15)] hover:shadow-xl transition-all duration-300 group flex flex-col">
-                <div className={`h-48 relative flex items-center justify-center bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.2)] border-b ${rColors.border} p-6`}>
+              <div key={item.id} className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--accent)] hover:shadow-xl transition-all duration-300 group flex flex-col">
+                <div className={`h-48 relative flex items-center justify-center bg-gradient-to-b from-transparent to-[var(--column-bg)] border-b ${rColors.border} p-6`}>
                   <div className="absolute top-3 right-3">
                     <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded border ${rColors.bg} ${rColors.text} ${rColors.border}`}>
                       {item.rarity}
@@ -149,7 +149,7 @@ export default function StoreCatalog({ items, ownedItemIds }: StoreCatalogProps)
                   </p>
                   
                   {isOwned ? (
-                    <button disabled className="w-full py-2.5 rounded-xl font-semibold bg-[rgba(255,255,255,0.05)] text-[var(--text-muted)] border border-[var(--border)] cursor-not-allowed">
+                    <button disabled className="w-full py-2.5 rounded-xl font-semibold bg-[var(--tag-bg)] text-[var(--text-muted)] border border-[var(--border)] cursor-not-allowed">
                       Ya lo tienes
                     </button>
                   ) : (

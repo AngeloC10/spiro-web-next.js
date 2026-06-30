@@ -99,7 +99,7 @@ export default function RecentActivity({ userId }: { userId: string }) {
             return (
               <li 
                 key={task.id} 
-                className="group/item flex items-start gap-3.5 text-sm p-3 -mx-3 rounded-xl transition-all duration-300 hover:bg-white/5 dark:hover:bg-black/20 hover:scale-[1.02] cursor-default border border-transparent hover:border-[var(--border)]/50 hover:shadow-sm animate-in fade-in slide-in-from-top-2 duration-500"
+                className="group/item flex items-start gap-3.5 text-sm p-3 -mx-3 rounded-xl transition-all duration-300 hover:bg-[var(--hover-bg)] hover:scale-[1.02] cursor-default border border-transparent hover:border-[var(--border)]/50 hover:shadow-sm animate-in fade-in slide-in-from-top-2 duration-500"
               >
                 <div className="relative mt-0.5 shrink-0">
                   <div className="absolute inset-0 rounded-full bg-green-500/20 animate-ping opacity-0 group-hover/item:opacity-100" style={{ animationDuration: '2s' }} />

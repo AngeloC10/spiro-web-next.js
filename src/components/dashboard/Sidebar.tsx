@@ -79,7 +79,7 @@ function NavGroup({
         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
           isActive
             ? 'bg-[var(--accent)] text-white font-medium shadow-md shadow-[rgba(0,172,193,0.25)]'
-            : 'text-[var(--text-secondary)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[var(--text-primary)]'
+            : 'text-[var(--text-secondary)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]'
         }`}
       >
         <span className="text-xl" aria-hidden="true">{item.icon}</span>
@@ -106,7 +106,7 @@ function NavGroup({
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
           isActive
             ? 'text-[var(--accent)] font-medium'
-            : 'text-[var(--text-secondary)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[var(--text-primary)]'
+            : 'text-[var(--text-secondary)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]'
         }`}
       >
         <span className="text-xl" aria-hidden="true">{item.icon}</span>
@@ -137,7 +137,7 @@ function NavGroup({
                       placeholder="Nombre..."
                       value={newBoardTitle}
                       onChange={e => setNewBoardTitle && setNewBoardTitle(e.target.value)}
-                      className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--border)] rounded px-2 py-1 text-sm text-[var(--text-primary)] mb-2 outline-none focus:border-[var(--accent)]"
+                      className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded px-2 py-1 text-sm text-[var(--text-primary)] mb-2 outline-none focus:border-[var(--accent)]"
                     />
                     <div className="flex gap-1">
                       <button type="submit" disabled={!newBoardTitle?.trim()} className="flex-1 bg-[var(--accent)] text-white text-[10px] font-bold py-1 rounded disabled:opacity-50">Crear</button>
@@ -164,7 +164,7 @@ function NavGroup({
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                   isSubActive
                     ? 'bg-[var(--accent)] text-white font-medium shadow-sm'
-                    : 'text-[var(--text-secondary)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[var(--text-primary)]'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 <span className="flex-1">{sub.name}</span>

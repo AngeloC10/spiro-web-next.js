@@ -80,7 +80,7 @@ function StatBar({ label, icon, value, max = 100, color, textColor }: {
           {value}{max !== 100 ? `/${max}` : '%'}
         </span>
       </div>
-      <div className="h-3 w-full bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden border border-[rgba(255,255,255,0.05)]">
+      <div className="h-3 w-full bg-[var(--progress-track)] rounded-full overflow-hidden border border-[var(--progress-track)]">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${pct}%`, background: color, boxShadow: `0 0 8px ${color}55` }}
@@ -106,7 +106,7 @@ function LevelUpToast({ level, onDismiss }: { level: number; onDismiss: () => vo
         className="flex items-center gap-4 px-8 py-5 rounded-2xl text-white font-bold text-lg"
         style={{
           background: 'linear-gradient(135deg, #00ACC1 0%, #0097a7 40%, #34d399 100%)',
-          border: '1px solid rgba(255,255,255,0.2)',
+          border: '1px solid var(--border)',
         }}
       >
         <span className="text-3xl animate-bounce">⬆️</span>
@@ -390,8 +390,8 @@ export default function PetPage() {
               background: 'linear-gradient(135deg, #00ACC1 0%, #0097a7 100%)',
               boxShadow: '0 4px 20px rgba(0,172,193,0.35)',
             } : {
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--hover-bg)',
+              border: '1px solid var(--border)',
             }}
           >
             {feeding ? (
@@ -420,8 +420,8 @@ export default function PetPage() {
               background: 'linear-gradient(135deg, #facc15 0%, #eab308 100%)',
               boxShadow: '0 4px 20px rgba(234,179,8,0.35)',
             } : {
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--hover-bg)',
+              border: '1px solid var(--border)',
             }}
           >
             {playing ? (
@@ -454,7 +454,7 @@ export default function PetPage() {
             { label: 'XP Total', value: pet.xp, icon: '⚡', color: 'text-emerald-400' },
             { label: 'Próximo nivel', value: xpNeeded - pet.xp, icon: '🎯', color: 'text-[var(--accent)]' },
           ].map(({ label, value, icon, color }) => (
-            <div key={label} className="bg-[rgba(255,255,255,0.03)] rounded-xl p-4 border border-[rgba(255,255,255,0.05)]">
+            <div key={label} className="bg-[var(--hover-bg)] rounded-xl p-4 border border-[var(--border)]">
               <div className="text-2xl mb-1">{icon}</div>
               <div className={`text-xl font-bold tabular-nums ${color}`}>{value}</div>
               <div className="text-xs text-[var(--text-muted)] mt-0.5">{label}</div>

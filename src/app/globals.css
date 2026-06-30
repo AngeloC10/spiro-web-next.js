@@ -1,20 +1,59 @@
 @import "tailwindcss";
 
 /* ── Design Tokens ───────────────────────────────────────────────────────── */
+/* Light mode (default) */
 :root {
   /* Brand */
   --accent:        #00ACC1;
   --accent-dark:   #0097a7;
   --accent-light:  #4dd0e1;
+
+  /* Semantic surfaces */
   --dark:          #1A1A2E;
   --dark-mid:      #16213e;
   --dark-surface:  #0f3460;
+  --background:    #f5f7fa;
+  --foreground:    #1a1a2e;
+  --bg-surface:    #ffffff;
+
+  /* Card / inputs */
+  --card-bg:       rgba(255, 255, 255, 0.85);
+  --card-border:   rgba(0, 0, 0, 0.08);
+  --input-bg:      rgba(0, 0, 0, 0.03);
+  --input-border:  rgba(0, 0, 0, 0.10);
+  --border:        rgba(0, 0, 0, 0.10);
+
+  /* Text */
+  --text-primary:   #1a1a2e;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
+
+  /* Feedback */
+  --color-error:   #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+
+  /* Theme-aware utility colors */
+  --hover-bg:       rgba(0, 0, 0, 0.04);
+  --progress-track: rgba(0, 0, 0, 0.06);
+  --tag-bg:         rgba(0, 0, 0, 0.05);
+  --overlay-bg:     rgba(0, 0, 0, 0.3);
+  --skeleton-bg:    rgba(0, 0, 0, 0.07);
+  --column-bg:      rgba(0, 0, 0, 0.03);
+}
+
+/* Dark mode */
+.dark {
+  --background:    #1A1A2E;
+  --foreground:    #f0f4f8;
+  --bg-surface:    #16213e;
 
   /* Card / inputs */
   --card-bg:       rgba(255, 255, 255, 0.05);
   --card-border:   rgba(255, 255, 255, 0.10);
   --input-bg:      rgba(255, 255, 255, 0.06);
   --input-border:  rgba(255, 255, 255, 0.12);
+  --border:        rgba(255, 255, 255, 0.10);
 
   /* Text */
   --text-primary:   #f0f4f8;
@@ -26,9 +65,13 @@
   --color-success: #34d399;
   --color-warning: #fbbf24;
 
-  /* Body background (dark base) */
-  --background: var(--dark);
-  --foreground: var(--text-primary);
+  /* Theme-aware utility colors */
+  --hover-bg:       rgba(255, 255, 255, 0.05);
+  --progress-track: rgba(255, 255, 255, 0.06);
+  --tag-bg:         rgba(255, 255, 255, 0.05);
+  --overlay-bg:     rgba(0, 0, 0, 0.6);
+  --skeleton-bg:    rgba(255, 255, 255, 0.1);
+  --column-bg:      rgba(0, 0, 0, 0.1);
 }
 
 /* ── Tailwind @theme – expose tokens as Tailwind color utilities ──────────── */
@@ -56,11 +99,12 @@ html { height: 100%; }
 
 body {
   min-height: 100%;
-  background: var(--dark);
+  background: var(--background);
   color: var(--text-primary);
   font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ── Keyframe animations ─────────────────────────────────────────────────── */
@@ -81,9 +125,13 @@ body {
 /* ── Auth layout gradient background ─────────────────────────────────────── */
 .auth-gradient-bg {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--dark) 0%, var(--dark-mid) 50%, #0d2137 100%);
+  background: linear-gradient(135deg, var(--background) 0%, var(--bg-surface) 50%, var(--background) 100%);
   position: relative;
   overflow: hidden;
+}
+
+.dark .auth-gradient-bg {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--dark-mid) 50%, #0d2137 100%);
 }
 
 /* Decorative blobs */
@@ -97,8 +145,12 @@ body {
   max-width: 600px;
   max-height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 172, 193, 0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 172, 193, 0.10) 0%, transparent 70%);
   pointer-events: none;
+}
+
+.dark .auth-gradient-bg::before {
+  background: radial-gradient(circle, rgba(0, 172, 193, 0.14) 0%, transparent 70%);
 }
 
 .auth-gradient-bg::after {
@@ -111,19 +163,30 @@ body {
   max-width: 500px;
   max-height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 172, 193, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 172, 193, 0.06) 0%, transparent 70%);
   pointer-events: none;
+}
+
+.dark .auth-gradient-bg::after {
+  background: radial-gradient(circle, rgba(0, 172, 193, 0.08) 0%, transparent 70%);
 }
 
 /* ── Auth card ───────────────────────────────────────────────────────────── */
 .auth-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: 1.5rem;
   width: 100%;
   max-width: 26rem;
+  box-shadow:
+    0 0 0 1px rgba(0, 172, 193, 0.06),
+    0 24px 48px -12px rgba(0, 0, 0, 0.15),
+    0 0 100px -30px rgba(0, 172, 193, 0.08);
+}
+
+.dark .auth-card {
   box-shadow:
     0 0 0 1px rgba(0, 172, 193, 0.06),
     0 24px 48px -12px rgba(0, 0, 0, 0.7),
@@ -133,8 +196,8 @@ body {
 /* ── Form input ──────────────────────────────────────────────────────────── */
 .form-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   color: var(--text-primary);
@@ -215,15 +278,15 @@ body {
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  background: var(--hover-bg);
+  border: 1.5px solid var(--border);
   color: var(--text-primary);
   transition: all 0.2s ease;
 }
 
 .btn-oauth:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.20);
+  background: var(--input-bg);
+  border-color: var(--accent);
 }
 
 .btn-oauth:active:not(:disabled) { transform: scale(0.98); }
@@ -248,7 +311,7 @@ body {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--border);
 }
 
 /* ── Accent text ─────────────────────────────────────────────────────────── */
@@ -273,7 +336,7 @@ body {
 .step-dot {
   height: 0.5rem;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--progress-track);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -292,8 +355,8 @@ body {
   position: relative;
   cursor: pointer;
   border-radius: 1.25rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: var(--card-bg);
+  border: 2px solid var(--border);
   padding: 1.25rem 1rem;
   text-align: center;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -403,4 +466,10 @@ body {
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
   font-size: 1.5rem;
   z-index: 100;
+}
+
+/* ── Select/option styling for light mode ──────────────────────────────────── */
+select option {
+  background: var(--bg-surface);
+  color: var(--text-primary);
 }

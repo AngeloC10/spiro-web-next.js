@@ -69,7 +69,7 @@ export default function FavoritesList({ initialTasks }: { initialTasks: Task[] }
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   {task.category && (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[rgba(255,255,255,0.06)] text-[var(--text-secondary)] border border-[var(--border)]">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[var(--tag-bg)] text-[var(--text-secondary)] border border-[var(--border)]">
                       {task.category}
                     </span>
                   )}

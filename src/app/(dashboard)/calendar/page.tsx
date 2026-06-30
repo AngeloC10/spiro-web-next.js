@@ -139,13 +139,13 @@ export default function CalendarPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={prevMonth} className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--card-bg)] border border-[var(--border)] hover:bg-[rgba(255,255,255,0.05)] transition-colors">
+            <button onClick={prevMonth} className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--card-bg)] border border-[var(--border)] hover:bg-[var(--hover-bg)] transition-colors">
               &lt;
             </button>
-            <button onClick={() => setCurrentDate(new Date())} className="px-3 py-1.5 text-sm font-semibold rounded-lg bg-[var(--card-bg)] border border-[var(--border)] hover:bg-[rgba(255,255,255,0.05)] transition-colors">
+            <button onClick={() => setCurrentDate(new Date())} className="px-3 py-1.5 text-sm font-semibold rounded-lg bg-[var(--card-bg)] border border-[var(--border)] hover:bg-[var(--hover-bg)] transition-colors">
               Hoy
             </button>
-            <button onClick={nextMonth} className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--card-bg)] border border-[var(--border)] hover:bg-[rgba(255,255,255,0.05)] transition-colors">
+            <button onClick={nextMonth} className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--card-bg)] border border-[var(--border)] hover:bg-[var(--hover-bg)] transition-colors">
               &gt;
             </button>
           </div>
@@ -156,7 +156,7 @@ export default function CalendarPage() {
       <div className="flex-1 bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl overflow-hidden flex flex-col shadow-xl">
         
         {/* Days of week header */}
-        <div className="grid grid-cols-7 border-b border-[var(--border)] bg-[rgba(255,255,255,0.02)]">
+        <div className="grid grid-cols-7 border-b border-[var(--border)] bg-[var(--column-bg)]">
           {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(d => (
             <div key={d} className="py-3 text-center text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
               {d}
@@ -186,8 +186,8 @@ export default function CalendarPage() {
             return (
               <div 
                 key={idx} 
-                className={`min-h-[80px] p-1 sm:p-2 border-r border-b border-[var(--border)] flex flex-col gap-1 overflow-hidden transition-colors hover:bg-[rgba(255,255,255,0.02)] ${
-                  !isCurrentMonth ? 'opacity-40 bg-[rgba(0,0,0,0.1)]' : ''
+                className={`min-h-[80px] p-1 sm:p-2 border-r border-b border-[var(--border)] flex flex-col gap-1 overflow-hidden transition-colors hover:bg-[var(--hover-bg)] ${
+                  !isCurrentMonth ? 'opacity-40 bg-[var(--column-bg)]' : ''
                 }`}
               >
                 <div className="flex justify-between items-start">

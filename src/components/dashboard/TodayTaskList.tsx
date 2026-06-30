@@ -100,7 +100,7 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
         return (
           <div
             key={task.id}
-            className={`group flex items-start gap-4 bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-5 border-l-4 ${cfg.border} transition-all duration-300 animate-fade-in-up hover:shadow-lg hover:shadow-[rgba(0,172,193,0.06)] hover:border-[rgba(255,255,255,0.12)] ${isDone ? 'opacity-50' : ''}`}
+            className={`group flex items-start gap-4 bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-5 border-l-4 ${cfg.border} transition-all duration-300 animate-fade-in-up hover:shadow-lg hover:shadow-[rgba(0,172,193,0.06)] hover:border-[var(--border)] ${isDone ? 'opacity-50' : ''}`}
           >
             {/* Big checkbox */}
             <button
@@ -113,7 +113,7 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
                   ? 'bg-[var(--color-success)] border-[var(--color-success)] text-white'
                   : isLoading
                   ? 'border-[var(--accent)] bg-[rgba(0,172,193,0.15)] animate-pulse'
-                  : 'border-[rgba(255,255,255,0.2)] hover:border-[var(--color-success)] hover:bg-[rgba(52,211,153,0.1)] hover:scale-110'
+                  : 'border-[var(--border)] hover:border-[var(--color-success)] hover:bg-[rgba(52,211,153,0.1)] hover:scale-110'
               }`}
             >
               {isDone || isLoading ? (
@@ -131,7 +131,7 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
                   {cfg.label}
                 </span>
                 {task.category && (
-                  <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[rgba(255,255,255,0.06)] text-[var(--text-secondary)] border border-[var(--border)]">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[var(--tag-bg)] text-[var(--text-secondary)] border border-[var(--border)]">
                     {task.category}
                   </span>
                 )}
@@ -154,7 +154,7 @@ export default function TodayTaskList({ initialTasks }: TodayTaskListProps) {
                       <span>{done}/{total} subitems</span>
                       <span>{pct}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-[var(--progress-track)] rounded-full overflow-hidden">
                       <div className="h-full bg-[var(--accent)] rounded-full transition-all" style={{ width: `${pct}%` }} />
                     </div>
                   </div>

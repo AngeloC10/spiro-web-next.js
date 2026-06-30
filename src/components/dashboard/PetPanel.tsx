@@ -36,7 +36,7 @@ function StatMiniBar({ value, color, icon }: { value: number; color: string; ico
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm shrink-0">{icon}</span>
-      <div className="flex-1 h-2 bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-[var(--progress-track)] rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${pct}%`, background: color, boxShadow: `0 0 6px ${color}66` }}
@@ -90,7 +90,7 @@ export default function PetPanel({ pet: propPet }: PetPanelProps) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-5 relative">
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-[rgba(255,255,255,0.08)] shrink-0"
+          className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-[var(--border)] shrink-0"
           style={{ background: meta.avatarBg }}
         >
           {emoji}
@@ -116,7 +116,7 @@ export default function PetPanel({ pet: propPet }: PetPanelProps) {
             <span className="text-[var(--text-muted)]">EXP</span>
             <span className="text-emerald-400 tabular-nums">{pet.xp} / {xpNeeded}</span>
           </div>
-          <div className="h-2 w-full bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden border border-[rgba(255,255,255,0.04)]">
+          <div className="h-2 w-full bg-[var(--progress-track)] rounded-full overflow-hidden border border-[var(--progress-track)]">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{

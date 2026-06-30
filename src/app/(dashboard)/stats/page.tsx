@@ -19,7 +19,7 @@ const DAY_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 const MONTH_LABELS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
 function getCellColor(count: number): string {
-  if (count === 0) return 'rgba(255,255,255,0.05)'
+  if (count === 0) return 'var(--progress-track)'
   if (count === 1) return 'rgba(0,172,193,0.35)'
   if (count === 2) return 'rgba(0,172,193,0.55)'
   if (count === 3) return 'rgba(0,172,193,0.75)'
@@ -125,7 +125,7 @@ export default function StatsPage() {
         ].map(({ label, value, icon, color }) => (
           <div
             key={label}
-            className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-5 text-center hover:border-[rgba(255,255,255,0.15)] transition-colors"
+            className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-5 text-center hover:border-[var(--accent)] transition-colors"
           >
             <div className="text-2xl mb-2">{icon}</div>
             <div className={`text-3xl font-black tabular-nums ${color}`}>{value}</div>
@@ -173,7 +173,7 @@ export default function StatsPage() {
                       className="w-[14px] h-[14px] rounded-sm cursor-pointer transition-all duration-150 hover:scale-125 hover:z-10"
                       style={{
                         background: getCellColor(cell.count),
-                        border: cell.count > 0 ? '1px solid rgba(0,172,193,0.2)' : '1px solid rgba(255,255,255,0.04)',
+                        border: cell.count > 0 ? '1px solid rgba(0,172,193,0.2)' : '1px solid var(--progress-track)',
                       }}
                       title={`${cell.dateStr}: ${cell.count} tarea${cell.count !== 1 ? 's' : ''}`}
                       onMouseEnter={(e) => {

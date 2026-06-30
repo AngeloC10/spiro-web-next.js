@@ -50,7 +50,7 @@ export default async function AchievementsPage() {
         </div>
 
         {/* Overall progress bar */}
-        <div className="mt-5 h-2 w-full bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden">
+        <div className="mt-5 h-2 w-full bg-[var(--progress-track)] rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{
@@ -96,10 +96,10 @@ export default async function AchievementsPage() {
                 style={{
                   background: isUnlocked
                     ? 'linear-gradient(135deg, rgba(0,172,193,0.2) 0%, rgba(0,151,167,0.1) 100%)'
-                    : 'rgba(255,255,255,0.04)',
+                    : 'var(--hover-bg)',
                   border: isUnlocked
                     ? '1px solid rgba(0,172,193,0.35)'
-                    : '1px solid rgba(255,255,255,0.08)',
+                    : '1px solid var(--border)',
                   boxShadow: isUnlocked ? '0 0 20px rgba(0,172,193,0.2)' : 'none',
                 }}
               >

@@ -114,7 +114,7 @@ export default function BoardHeader({ board }: BoardHeaderProps) {
           <button 
             onClick={() => { setIsEditing(false); setTitle(board.title); }} 
             disabled={isSaving}
-            className="p-2 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-secondary)] rounded-xl hover:text-white hover:border-[rgba(255,255,255,0.2)] transition-colors disabled:opacity-50"
+            className="p-2 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-secondary)] rounded-xl hover:text-[var(--text-primary)] hover:border-[var(--accent)] transition-colors disabled:opacity-50"
             title="Cancelar"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -125,7 +125,7 @@ export default function BoardHeader({ board }: BoardHeaderProps) {
       ) : (
         <div className="flex items-center gap-3 animate-in fade-in duration-300">
           <h1 
-            className="text-3xl font-extrabold text-[var(--text-primary)] tracking-tight cursor-pointer hover:text-[var(--accent)] transition-all duration-300 px-3 py-1.5 -ml-3 rounded-xl hover:bg-[rgba(255,255,255,0.03)] group-hover:shadow-sm"
+            className="text-3xl font-extrabold text-[var(--text-primary)] tracking-tight cursor-pointer hover:text-[var(--accent)] transition-all duration-300 px-3 py-1.5 -ml-3 rounded-xl hover:bg-[var(--hover-bg)] group-hover:shadow-sm"
             onClick={() => setIsEditing(true)}
             title="Click para editar"
           >

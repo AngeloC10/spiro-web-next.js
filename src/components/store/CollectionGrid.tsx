@@ -86,9 +86,9 @@ export default function CollectionGrid({ collection, activePetType: initialActiv
 
               return (
                 <div key={item.id} className={`bg-[var(--card-bg)] border rounded-2xl overflow-hidden flex flex-col transition-all duration-300 ${
-                  isActive ? 'border-[var(--accent)] shadow-lg shadow-[rgba(0,172,193,0.15)] ring-1 ring-[var(--accent)]' : 'border-[var(--border)] hover:border-[rgba(255,255,255,0.15)]'
+                  isActive ? 'border-[var(--accent)] shadow-lg shadow-[rgba(0,172,193,0.15)] ring-1 ring-[var(--accent)]' : 'border-[var(--border)] hover:border-[var(--accent)]'
                 }`}>
-                  <div className={`h-32 relative flex items-center justify-center p-4 border-b ${rColors.border} ${isActive ? 'bg-[rgba(0,172,193,0.05)]' : 'bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.2)]'}`}>
+                  <div className={`h-32 relative flex items-center justify-center p-4 border-b ${rColors.border} ${isActive ? 'bg-[rgba(0,172,193,0.05)]' : 'bg-gradient-to-b from-transparent to-[var(--column-bg)]'}`}>
                     <div className="absolute top-2 right-2">
                       <span className={`text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border ${rColors.bg} ${rColors.text} ${rColors.border}`}>
                         {storeItem.rarity}
@@ -115,7 +115,7 @@ export default function CollectionGrid({ collection, activePetType: initialActiv
                       <button 
                         onClick={() => handleActivate(item.pet_type)}
                         disabled={isUpdating}
-                        className="mt-auto w-full py-2 rounded-lg font-semibold text-xs bg-[rgba(255,255,255,0.05)] text-[var(--text-secondary)] hover:text-white border border-[var(--border)] hover:bg-[rgba(255,255,255,0.1)] transition-colors disabled:opacity-50"
+                        className="mt-auto w-full py-2 rounded-lg font-semibold text-xs bg-[var(--tag-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border)] hover:bg-[var(--hover-bg)] transition-colors disabled:opacity-50"
                       >
                         {isUpdating ? 'Activando...' : 'Activar'}
                       </button>
@@ -143,7 +143,7 @@ export default function CollectionGrid({ collection, activePetType: initialActiv
 
               return (
                 <div key={item.id} className="bg-[var(--card-bg)] border border-[var(--border)] rounded-xl overflow-hidden flex flex-col">
-                  <div className={`h-24 relative flex items-center justify-center p-3 border-b ${rColors.border} bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.2)]`}>
+                  <div className={`h-24 relative flex items-center justify-center p-3 border-b ${rColors.border} bg-gradient-to-b from-transparent to-[var(--column-bg)]`}>
                     <div className="relative w-full h-full drop-shadow-md">
                       <Image 
                         src={storeItem.preview_url} 

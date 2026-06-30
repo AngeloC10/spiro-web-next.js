@@ -34,9 +34,9 @@ export default function AchievementToast({ achievementName, achievementIcon, xpR
       <div
         className="flex items-center gap-4 px-6 py-4 rounded-2xl shadow-2xl min-w-[300px]"
         style={{
-          background: 'linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(22,33,62,0.98) 100%)',
+          background: 'var(--bg-surface)',
           border: '1px solid rgba(0,172,193,0.4)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,172,193,0.2), 0 0 40px rgba(0,172,193,0.15)',
+          boxShadow: '0 8px 32px var(--overlay-bg), 0 0 0 1px rgba(0,172,193,0.2), 0 0 40px rgba(0,172,193,0.15)',
           backdropFilter: 'blur(16px)',
         }}
       >
