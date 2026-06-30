@@ -131,11 +131,12 @@ export default function PetPage() {
   const [pet, setPetLocal]     = useState<Pet | null>(null)
   const [loading, setLoading]  = useState(true)
   const [feeding, setFeeding]  = useState(false)
+  const [playing, setPlaying]  = useState(false)
   const [feedAnim, setFeedAnim]= useState(false)
   const [levelUpToast, setLevelUpToast] = useState<number | null>(null)
   const [feedError, setFeedError] = useState<string | null>(null)
 
-  const { xpEarnedToday, consumeXpForFeed, setPet: setStorePet, resetDailyXpIfNeeded } = usePetStore()
+  const { xpEarnedToday, consumeXpForAction, setPet: setStorePet, resetDailyXpIfNeeded } = usePetStore()
   const supabase = createClient()
 
   // ── Fetch active pet ─────────────────────────────────────────────────────────
@@ -154,7 +155,6 @@ export default function PetPage() {
       const p = data as Pet
       setPetLocal(p)
       setStorePet(p)
-      await checkLevelUp(p, user.id)
     }
     setLoading(false)
   }, [supabase])
@@ -164,33 +164,13 @@ export default function PetPage() {
     loadPet()
   }, [loadPet, resetDailyXpIfNeeded])
 
-  // ── Level-up check ───────────────────────────────────────────────────────────
-  const checkLevelUp = async (p: Pet, userId: string) => {
-    const xpNeeded = p.level * 100
-    if (p.xp >= xpNeeded) {
-      const newLevel = p.level + 1
-      const remainingXp = p.xp - xpNeeded
-
-      await supabase
-        .from('pets')
-        .update({ level: newLevel, xp: remainingXp, last_updated: new Date().toISOString() })
-        .eq('id', p.id)
-
-      const updated: Pet = { ...p, level: newLevel, xp: remainingXp }
-      setPetLocal(updated)
-      setStorePet(updated)
-      setLevelUpToast(newLevel)
-    }
-  }
-
   // ── Feed action ──────────────────────────────────────────────────────────────
   const handleFeed = async () => {
     if (!pet || feeding) return
     setFeedError(null)
 
-    const consumed = consumeXpForFeed(50)
-    if (consumed === 0) {
-      setFeedError('¡Necesitas ganar XP completando tareas primero!')
+    if (!consumeXpForAction(50)) {
+      setFeedError('¡Necesitas al menos 50 XP ganados hoy para alimentar!')
       return
     }
 
@@ -198,20 +178,40 @@ export default function PetPage() {
     setFeedAnim(true)
     setTimeout(() => setFeedAnim(false), 600)
 
-    const newHunger = Math.min(100, pet.hunger + 30)
-    const newHappiness = Math.min(100, pet.happiness + 5)
+    const { data, error } = await supabase.rpc('interact_with_pet', { p_action: 'feed' })
 
-    const { error } = await supabase
-      .from('pets')
-      .update({ hunger: newHunger, happiness: newHappiness, last_updated: new Date().toISOString() })
-      .eq('id', pet.id)
-
-    if (!error) {
-      const updated: Pet = { ...pet, hunger: newHunger, happiness: newHappiness }
+    if (!error && data && data.length > 0) {
+      const { new_hunger, new_happiness } = data[0]
+      const updated: Pet = { ...pet, hunger: new_hunger, happiness: new_happiness }
       setPetLocal(updated)
       setStorePet(updated)
     }
     setFeeding(false)
+  }
+
+  // ── Play action ──────────────────────────────────────────────────────────────
+  const handlePlay = async () => {
+    if (!pet || playing) return
+    setFeedError(null)
+
+    if (!consumeXpForAction(30)) {
+      setFeedError('¡Necesitas al menos 30 XP ganados hoy para jugar!')
+      return
+    }
+
+    setPlaying(true)
+    setFeedAnim(true) // Reusing feed animation for now
+    setTimeout(() => setFeedAnim(false), 600)
+
+    const { data, error } = await supabase.rpc('interact_with_pet', { p_action: 'play' })
+
+    if (!error && data && data.length > 0) {
+      const { new_hunger, new_happiness } = data[0]
+      const updated: Pet = { ...pet, hunger: new_hunger, happiness: new_happiness }
+      setPetLocal(updated)
+      setStorePet(updated)
+    }
+    setPlaying(false)
   }
 
   // ── Derived state ────────────────────────────────────────────────────────────
@@ -355,13 +355,13 @@ export default function PetPage() {
         </div>
       </div>
 
-      {/* ── Feed section ────────────────────────────────────────────────────── */}
+      {/* ── Interact section ─────────────────────────────────────────────────── */}
       <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 mb-6">
         <div className="flex items-start justify-between mb-4 gap-4">
           <div>
-            <h3 className="font-semibold text-[var(--text-primary)] mb-1">Alimentar</h3>
+            <h3 className="font-semibold text-[var(--text-primary)] mb-1">Interactuar</h3>
             <p className="text-sm text-[var(--text-secondary)]">
-              Usa XP ganado hoy para alimentar a tu mascota (+30🍗 +5❤️)
+              Usa XP ganado hoy para cuidar de tu mascota.
             </p>
           </div>
           <div className="shrink-0 text-right">
@@ -376,36 +376,71 @@ export default function PetPage() {
           <div className="alert-error text-sm mb-4">⚠️ {feedError}</div>
         )}
 
-        <button
-          id="btn-feed-pet"
-          onClick={handleFeed}
-          disabled={feeding || !canFeed}
-          className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
-            canFeed && !feeding
-              ? 'text-white cursor-pointer hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]'
-              : 'opacity-40 cursor-not-allowed text-[var(--text-muted)]'
-          }`}
-          style={canFeed ? {
-            background: 'linear-gradient(135deg, #00ACC1 0%, #0097a7 100%)',
-            boxShadow: '0 4px 20px rgba(0,172,193,0.35)',
-          } : {
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}
-        >
-          {feeding ? (
-            <>
-              <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-              Alimentando…
-            </>
-          ) : (
-            <>🍗 Alimentar (cuesta 50 XP)</>
-          )}
-        </button>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            id="btn-feed-pet"
+            onClick={handleFeed}
+            disabled={feeding || !canFeed || xpEarnedToday < 50}
+            className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
+              canFeed && !feeding && xpEarnedToday >= 50
+                ? 'text-white cursor-pointer hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]'
+                : 'opacity-40 cursor-not-allowed text-[var(--text-muted)]'
+            }`}
+            style={canFeed && xpEarnedToday >= 50 ? {
+              background: 'linear-gradient(135deg, #00ACC1 0%, #0097a7 100%)',
+              boxShadow: '0 4px 20px rgba(0,172,193,0.35)',
+            } : {
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
+          >
+            {feeding ? (
+              <>
+                <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                ...
+              </>
+            ) : (
+              <span className="flex flex-col items-center leading-tight">
+                <span>🍗 Alimentar</span>
+                <span className="text-[10px] font-normal opacity-80">(50 XP) +40 hambre</span>
+              </span>
+            )}
+          </button>
 
-        {!canFeed && (
+          <button
+            id="btn-play-pet"
+            onClick={handlePlay}
+            disabled={playing || !canFeed || xpEarnedToday < 30}
+            className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
+              canFeed && !playing && xpEarnedToday >= 30
+                ? 'text-white cursor-pointer hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]'
+                : 'opacity-40 cursor-not-allowed text-[var(--text-muted)]'
+            }`}
+            style={canFeed && xpEarnedToday >= 30 ? {
+              background: 'linear-gradient(135deg, #facc15 0%, #eab308 100%)',
+              boxShadow: '0 4px 20px rgba(234,179,8,0.35)',
+            } : {
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
+          >
+            {playing ? (
+              <>
+                <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                ...
+              </>
+            ) : (
+              <span className="flex flex-col items-center leading-tight">
+                <span>🎾 Jugar</span>
+                <span className="text-[10px] font-normal text-amber-900 opacity-80">(30 XP) +25 felicidad</span>
+              </span>
+            )}
+          </button>
+        </div>
+
+        {(!canFeed || xpEarnedToday < 30) && (
           <p className="text-xs text-[var(--text-muted)] text-center mt-3">
-            Completa tareas para ganar XP y poder alimentar a tu mascota
+            Completa tareas para ganar XP y poder interactuar con tu mascota
           </p>
         )}
       </div>

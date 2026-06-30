@@ -46,7 +46,10 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
   }, [initialTasks])
 
   const supabase = createClient()
-  const { addXpToday, pet } = usePetStore()
+  const { addXpToday, pet, setPet } = usePetStore()
+
+  // ── Star Animation State ───────────────────────────────────────────────────
+  const [completedTaskId, setCompletedTaskId] = useState<string | null>(null)
 
   // ── WIP Warning State ──────────────────────────────────────────────────────
   const [wipWarning, setWipWarning] = useState<boolean>(false)
@@ -131,46 +134,56 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
         .update({ status: newStatus, position: destination.index, updated_at: new Date().toISOString() })
         .eq('id', draggableId)
 
-      if (!error && newStatus === 'done' && oldStatus !== 'done' && petId) {
-        awardXP(draggedTask)
+      if (!error && newStatus === 'done' && petId) {
+        setCompletedTaskId(draggableId)
+        setTimeout(() => setCompletedTaskId(null), 1500)
+        if (oldStatus !== 'done') {
+          awardXP(draggableId)
+        }
       }
     }
   }
 
   // ── XP Logic + Streak + Achievements ───────────────────────────────────────
-  const awardXP = async (task: Task) => {
+  const awardXP = async (taskId: string) => {
     if (!petId) return
-    let xpReward = 15
-    if (task.priority === 'high' || task.priority === 'urgent') xpReward = 50
-    else if (task.priority === 'medium') xpReward = 30
+    
+    // Call the secure RPC to calculate and award XP
+    const { data: xpReward, error } = await supabase.rpc('award_task_xp', { p_task_id: taskId })
+    
+    console.log('🌟 DEBUG awardXP ->', { taskId, xpReward, error })
 
-    if (task.due_date) {
-      const dueDate = new Date(task.due_date)
-      if (dueDate >= new Date()) xpReward = Math.floor(xpReward * 1.3)
+    if (error) {
+      console.error('Error awarding XP:', error)
+      return
     }
 
-    addXpToday(xpReward)
-
-    // Update pet XP in DB
-    const { data: petData } = await supabase.from('pets').select('xp').eq('id', petId).single()
-    if (petData) {
-      await supabase.from('pets').update({ xp: petData.xp + xpReward }).eq('id', petId)
-    }
-
-    // Update streak
-    await supabase.rpc('update_streak', { p_user_id: userId })
-
-    // Check achievements & show toast for newly unlocked ones
-    const { data: newAchs } = await supabase.rpc('check_achievements', { p_user_id: userId })
-    if (newAchs && newAchs.length > 0) {
-      // Fetch first newly unlocked achievement details
-      const { data: achData } = await supabase
-        .from('achievements')
-        .select('name, icon, xp_reward')
-        .eq('key', newAchs[0])
+    if (xpReward && xpReward > 0) {
+      // Add to today's local pool for feeding/playing
+      addXpToday(xpReward)
+      
+      // Fetch fresh pet data to update UI dynamically
+      const { data: freshPet } = await supabase
+        .from('pets')
+        .select('*')
+        .eq('id', petId)
         .single()
-      if (achData) {
-        setAchievementToast({ name: achData.name, icon: achData.icon, xp: achData.xp_reward })
+      if (freshPet) {
+        setPet(freshPet as any)
+      }
+      
+      // Check for newly unlocked achievements returned by a separate call
+      const { data: newAchs } = await supabase.rpc('check_achievements', { p_user_id: userId })
+      if (newAchs && newAchs.length > 0) {
+        // Fetch first newly unlocked achievement details
+        const { data: achData } = await supabase
+          .from('achievements')
+          .select('name, icon, xp_reward')
+          .eq('key', newAchs[0])
+          .single()
+        if (achData) {
+          setAchievementToast({ name: achData.name, icon: achData.icon, xp: achData.xp_reward })
+        }
       }
     }
   }
@@ -201,7 +214,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
 
   const handleTaskCompletedFromModal = () => {
     if (!selectedTask) return
-    awardXP(selectedTask)
+    awardXP(selectedTask.id)
   }
 
   if (!isMounted) {
@@ -303,7 +316,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 onClick={() => setSelectedTask(task)}
-                                className={`mb-3 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:border-[rgba(255,255,255,0.15)] transition-colors cursor-pointer border-l-4 ${
+                                className={`relative mb-3 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:border-[rgba(255,255,255,0.15)] transition-colors cursor-pointer border-l-4 ${
                                   PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.medium
                                 } ${snapshot.isDragging ? 'shadow-xl shadow-[rgba(0,172,193,0.15)] rotate-2 border-[var(--accent)] z-50' : ''}`}
                               >
@@ -343,6 +356,17 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
                                     {task.due_date ? `📅 ${dateText}` : ''}
                                   </div>
                                 </div>
+
+                                {/* Golden Star Animation Overlay */}
+                                {completedTaskId === task.id && (
+                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-xl z-50">
+                                    <div className="star-particle" style={{ left: '20%', top: '30%', animationDelay: '0s' }}>⭐</div>
+                                    <div className="star-particle" style={{ left: '50%', top: '50%', animationDelay: '0.1s', fontSize: '2rem' }}>⭐</div>
+                                    <div className="star-particle" style={{ left: '80%', top: '20%', animationDelay: '0.2s' }}>⭐</div>
+                                    <div className="star-particle" style={{ left: '30%', top: '70%', animationDelay: '0.15s' }}>✨</div>
+                                    <div className="star-particle" style={{ left: '70%', top: '60%', animationDelay: '0.05s', fontSize: '1.2rem' }}>🌟</div>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </Draggable>

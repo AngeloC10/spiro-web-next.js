@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { Pet } from '@/types'
+import { usePetStore } from '@/store/petStore'
 
 interface PetPanelProps {
   pet: Pet | null
@@ -47,7 +49,17 @@ function StatMiniBar({ value, color, icon }: { value: number; color: string; ico
   )
 }
 
-export default function PetPanel({ pet }: PetPanelProps) {
+export default function PetPanel({ pet: propPet }: PetPanelProps) {
+  const { pet: storePet, setPet } = usePetStore()
+
+  useEffect(() => {
+    if (propPet && (!storePet || storePet.id !== propPet.id)) {
+      setPet(propPet)
+    }
+  }, [propPet, storePet, setPet])
+
+  const pet = storePet || propPet
+
   if (!pet) {
     return (
       <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 text-center shadow-lg h-[220px] flex flex-col items-center justify-center">

@@ -14,7 +14,7 @@ interface PetStoreState {
   setPet: (pet: Pet | null) => void
   addXpToday: (amount: number) => void
   resetDailyXpIfNeeded: () => void
-  consumeXpForFeed: (amount: number) => number // returns how much was actually consumed
+  consumeXpForAction: (amount: number) => boolean
 }
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
@@ -41,15 +41,15 @@ export const usePetStore = create<PetStoreState>()(
         }
       },
 
-      /** Consumes up to `amount` XP from today's earned pool. Returns what was consumed. */
-      consumeXpForFeed: (amount) => {
+      /** Consumes exactly `amount` XP if available. Returns true if successful. */
+      consumeXpForAction: (amount) => {
         get().resetDailyXpIfNeeded()
         const available = get().xpEarnedToday
-        const consumed = Math.min(available, amount)
-        if (consumed > 0) {
-          set((state) => ({ xpEarnedToday: state.xpEarnedToday - consumed }))
+        if (available >= amount) {
+          set((state) => ({ xpEarnedToday: state.xpEarnedToday - amount }))
+          return true
         }
-        return consumed
+        return false
       },
     }),
     {
