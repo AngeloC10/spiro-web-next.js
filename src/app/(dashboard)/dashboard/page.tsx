@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import KanbanBoard from '@/components/dashboard/KanbanBoard'
 import PetPanel from '@/components/dashboard/PetPanel'
 import NewTaskButton from '@/components/dashboard/NewTaskButton'
+import RecentActivity from '@/components/dashboard/RecentActivity'
 
 import type { Task, Pet, Board } from '@/types'
 
@@ -97,13 +98,8 @@ export default async function DashboardPage({
       <div className="w-full md:w-80 shrink-0 space-y-6">
         <PetPanel pet={(pet as Pet) || null} />
         
-        {/* Placeholder for future widgets (e.g. activity log) */}
-        <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm">
-          <h3 className="font-semibold text-[var(--text-primary)] mb-4">Actividad Reciente</h3>
-          <p className="text-sm text-[var(--text-muted)] italic">
-            El historial se implementará en próximos sprints.
-          </p>
-        </div>
+        {/* Recent Activity Widget */}
+        <RecentActivity userId={user.id} />
       </div>
     </div>
   )
