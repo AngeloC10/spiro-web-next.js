@@ -5,6 +5,7 @@ import KanbanBoard from '@/components/dashboard/KanbanBoard'
 import PetPanel from '@/components/dashboard/PetPanel'
 import NewTaskButton from '@/components/dashboard/NewTaskButton'
 import RecentActivity from '@/components/dashboard/RecentActivity'
+import BoardHeader from '@/components/dashboard/BoardHeader'
 
 import type { Task, Pet, Board } from '@/types'
 
@@ -65,6 +66,7 @@ export default async function DashboardPage({
   }
 
   const activeBoardId = boardId || (boards.length > 0 ? boards[0].id : '')
+  const activeBoard = boards.find(b => b.id === activeBoardId)
 
   // Fetch tasks for active board
   const { data: tasks } = await supabase
@@ -79,9 +81,13 @@ export default async function DashboardPage({
       {/* Main Kanban Area — takes all available width minus the side panel */}
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="mb-6 flex items-center justify-between shrink-0 flex-wrap gap-4">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-            {boards.find(b => b.id === activeBoardId)?.title || 'Mis Tareas'}
-          </h1>
+          {activeBoard ? (
+            <BoardHeader board={activeBoard} />
+          ) : (
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+              Mis Tareas
+            </h1>
+          )}
           <NewTaskButton boardId={activeBoardId} />
         </div>
         
