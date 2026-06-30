@@ -10,6 +10,12 @@ import { usePetStore } from '@/store/petStore'
 import AchievementToast from '@/components/ui/AchievementToast'
 import EmptyState from '@/components/ui/EmptyState'
 
+const PET_EMOJIS: Record<string, string> = {
+  penguin: '🐧',
+  cat: '🐱',
+  dragon: '🐉',
+}
+
 const COLUMNS: { id: TaskStatus; title: string; wipLimit?: number }[] = [
   { id: 'todo', title: 'Por hacer' },
   { id: 'in_progress', title: 'En progreso', wipLimit: 3 },
@@ -34,7 +40,10 @@ interface KanbanBoardProps {
 export default function KanbanBoard({ initialTasks, userId, petId, boardId }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const supabase = createClient()
-  const { addXpToday } = usePetStore()
+  const { addXpToday, pet } = usePetStore()
+
+  // ── WIP Warning State ──────────────────────────────────────────────────────
+  const [wipWarning, setWipWarning] = useState<boolean>(false)
 
   // ── Achievement Toast State ────────────────────────────────────────────────
   interface ToastAch { name: string; icon: string; xp: number }
@@ -77,6 +86,15 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
     const sourceTasks = updatedTasks.filter(t => t.status === oldStatus).sort((a,b) => a.position - b.position)
     const destTasks = updatedTasks.filter(t => t.status === newStatus).sort((a,b) => a.position - b.position)
     
+    // Check WIP limit
+    if (oldStatus !== newStatus && newStatus === 'in_progress') {
+      const inProgressCol = COLUMNS.find(c => c.id === 'in_progress')
+      if (inProgressCol && inProgressCol.wipLimit && destTasks.length >= inProgressCol.wipLimit) {
+        setWipWarning(true)
+        return
+      }
+    }
+
     if (oldStatus === newStatus) {
       const reordered = Array.from(sourceTasks)
       const [removed] = reordered.splice(source.index, 1)
@@ -230,7 +248,7 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
             const isOverWip = col.wipLimit ? colTasks.length > col.wipLimit : false
 
             return (
-              <div key={col.id} className="flex flex-col w-80 shrink-0">
+              <div key={col.id} className="flex flex-col flex-1 min-w-[280px]">
                 <div className="flex items-center justify-between mb-3 px-1">
                   <h3 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
                     {col.title}
@@ -243,13 +261,6 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
                       <span className="text-amber-500 text-sm" title="Límite WIP excedido">⚠️</span>
                     )}
                   </h3>
-                  <button
-                    onClick={() => setCreatingStatus(col.id)}
-                    className="text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[rgba(0,172,193,0.1)] rounded px-2 py-0.5 transition-colors font-medium text-xl leading-none"
-                    title={`Añadir a ${col.title}`}
-                  >
-                    +
-                  </button>
                 </div>
 
                 <Droppable droppableId={col.id}>
@@ -360,6 +371,27 @@ export default function KanbanBoard({ initialTasks, userId, petId, boardId }: Ka
           onDelete={handleTaskDeleted}
           onTaskCompleted={handleTaskCompletedFromModal}
         />
+      )}
+
+      {/* WIP Warning Modal */}
+      {wipWarning && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-[var(--card-bg)] border-2 border-amber-500 rounded-3xl p-8 max-w-sm w-full shadow-[0_0_40px_rgba(245,158,11,0.3)] flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+            <div className="text-7xl mb-4 animate-bounce">
+              {pet ? (PET_EMOJIS[pet.type] || '🐾') : '🐾'}
+            </div>
+            <h3 className="text-2xl font-bold text-amber-400 mb-2">¡Límite de Trabajo!</h3>
+            <p className="text-[var(--text-secondary)] mb-6">
+              Recuerda, solo puedes tener hasta 3 tareas "En progreso". ¡Enfócate en terminar lo que ya empezaste antes de tomar más tareas!
+            </p>
+            <button 
+              onClick={() => setWipWarning(false)}
+              className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded-xl transition-colors w-full"
+            >
+              ¡Entendido!
+            </button>
+          </div>
+        </div>
       )}
     </>
   )
